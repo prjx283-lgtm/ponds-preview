@@ -103,6 +103,58 @@ button{font:inherit;cursor:pointer}
 .coin .mc{font:700 12px Unbounded,sans-serif}
 .hint{font-size:11px;color:#7b8f97;margin-top:10px}
 .fishes .pill{transform:translate(-50%,0)}
+/* start growing: drop a fish, with a live preview of it swimming in the pond */
+.launch-wrap{background:#f4f7f6;color:#0c2a33}
+.launch{max-width:1180px;margin:0 auto;padding:88px 24px 96px}
+.launch-head{max-width:720px;margin-bottom:40px}
+.launch-head h2{font:900 44px/1.05 Unbounded,sans-serif;letter-spacing:-.02em;text-wrap:balance}
+.launch-head p{font-size:15px;line-height:1.6;color:#4f6670;margin-top:14px}
+.lgrid{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:start}
+.lform{display:grid;gap:14px;min-width:0}
+.fstep{background:#fff;border-radius:18px;padding:18px 20px;box-shadow:inset 0 0 0 1px #e3e9e6}
+.fstep > .fh{display:flex;align-items:baseline;gap:10px;font:700 14px Unbounded,sans-serif;margin-bottom:12px}
+.fstep .n{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:#0c2a33;color:#fff;font:700 11px Unbounded,sans-serif;flex:none}
+.fstep .sub{font:400 12px "JetBrains Mono",monospace;color:#7b8f97}
+.drop{display:flex;align-items:center;gap:14px;border:2px dashed #cfdad5;border-radius:14px;padding:14px;cursor:pointer;transition:border-color .15s,background .15s}
+.drop:hover,.drop.over{border-color:#0c2a33;background:#f7faf9}
+.drop .thumb{width:56px;height:56px;border-radius:12px;background:#eef2f0;flex:none;overflow:hidden;display:grid;place-items:center;font:900 20px Unbounded,sans-serif;color:#9fb1ab}
+.drop .thumb img{width:100%;height:100%;object-fit:cover}
+.drop b{display:block;font:700 13px Unbounded,sans-serif}
+.drop span{font:400 12px "JetBrains Mono",monospace;color:#7b8f97}
+.drop input{position:absolute;width:1px;height:1px;opacity:0}
+.frow{display:grid;grid-template-columns:1fr 150px;gap:10px}
+.field{display:grid;gap:6px;min-width:0}
+.field small{font-size:11px;color:#7b8f97}
+.field input,.field textarea{width:100%;font:500 14px "JetBrains Mono",monospace;color:#0c2a33;background:#f7faf9;border:1px solid #dfe7e3;border-radius:12px;padding:11px 13px;outline:none}
+.field input:focus,.field textarea:focus{border-color:#0c2a33;background:#fff}
+.tick{position:relative}.tick input{padding-left:26px;text-transform:uppercase}.tick::before{content:"$";position:absolute;left:13px;top:11px;font:700 14px "JetBrains Mono",monospace;color:#7b8f97}
+.plist{display:grid;gap:4px;margin-top:10px;max-height:260px;overflow:auto}
+.prow{display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:10px;width:100%;background:none;border:0;border-radius:12px;padding:8px 10px;text-align:left;cursor:pointer;color:#1d3640;font-size:12px}
+.prow:hover{background:#f1f5f3}.prow.on{background:#e6eeea;box-shadow:inset 0 0 0 2px #0c2a33}
+.prow .pill{position:static;transform:none;--pill:10px}
+.prow .nm{color:#4f6670;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prow .v{font:700 11px Unbounded,sans-serif;white-space:nowrap}
+.prow .f{color:#7b8f97;white-space:nowrap}
+.lk{background:none;border:0;padding:0;margin-top:10px;font:500 12px "JetBrains Mono",monospace;color:#0c2a33;text-decoration:underline;cursor:pointer}
+.reg{margin-top:12px;display:grid;gap:8px}
+.reg p,.adv p{font-size:12px;line-height:1.55;color:#4f6670}
+.adv summary{cursor:pointer;font:700 13px Unbounded,sans-serif;list-style:none}
+.adv summary::-webkit-details-marker{display:none}
+.adv summary::before{content:"+ ";}.adv[open] summary::before{content:"\2212  ";}
+.adv .inner{display:grid;gap:10px;margin-top:14px}
+.go{display:grid;gap:10px}
+.need{font-size:12px;color:#7b8f97}
+.need b{color:#0c2a33}
+.gobtn{font:700 14px Unbounded,sans-serif;color:#fff;background:#0c2a33;border:0;border-radius:999px;padding:16px 22px 15px;cursor:pointer;box-shadow:0 3px 0 rgba(0,0,0,.25)}
+.gobtn:disabled{background:#a9b8b3;box-shadow:none;cursor:default}
+.soon{font-size:12px;color:#1d3640;background:#fff;border-radius:12px;padding:10px 12px;box-shadow:inset 0 0 0 1px #e3e9e6}
+.lprev{position:sticky;top:20px;background:#fff;border-radius:22px;padding:18px 18px 20px;box-shadow:inset 0 0 0 1px #e3e9e6}
+.lprev .eyebrow{font:700 11px Unbounded,sans-serif;color:#7b8f97;letter-spacing:.08em;text-transform:uppercase}
+.lprev .art{margin:6px -6px 4px}
+.lprev h4{font:900 22px Unbounded,sans-serif;letter-spacing:-.01em;margin-top:6px}
+.lprev .in{font-size:13px;color:#4f6670;margin-top:4px}
+.lprev .say{font-size:12px;line-height:1.6;color:#3c5560;margin-top:12px;padding-top:12px;border-top:1px solid #edf1ef}
+@media (max-width:860px){.lgrid{grid-template-columns:1fr}.lprev{position:static;order:-1}.frow{grid-template-columns:1fr}.launch-head h2{font-size:32px}}
 /* the fee pies */
 .pie-row{display:flex;align-items:center;gap:22px;margin-top:14px}
 .pie-row canvas{width:176px;flex:none;image-rendering:pixelated}
@@ -177,6 +229,30 @@ button{font:inherit;cursor:pointer}
     <span class="num">6 · $PONDS</span><h3>$PONDS burns itself too.</h3>
     <p>Every frenzy burns $PONDS. $PONDS is a pond as well, so every trade of a fish living in it burns $PONDS. And a steady buy and burn runs on its own, all the time. Nobody has to remember, nobody has to be trusted.</p></div></article>
 </section></div>
+<div class="launch-wrap"><section class="launch" id="launch">
+  <div class="launch-head"><h2>Start growing a pond.</h2><p>Picture, name, pond. One signature and your fish swims in that pond, and every trade of your fish burns the pond's coin.</p></div>
+  <div class="lgrid">
+    <form class="lform" id="lform" novalidate>
+      <div class="fstep"><div class="fh"><span class="n">1</span>Picture <span class="sub">PNG, JPG, WEBP or GIF</span></div>
+        <label class="drop" id="drop" for="lpic"><span class="thumb" id="thumb">?</span><span><b>Drop the picture here</b><span>or tap to pick a file. Your koi takes its colours.</span></span><input type="file" id="lpic" accept="image/png,image/jpeg,image/webp,image/gif"></label></div>
+      <div class="fstep"><div class="fh"><span class="n">2</span>Name <span class="sub">the ticker fills itself, change it if you like</span></div>
+        <div class="frow"><div class="field"><input id="lname" maxlength="32" placeholder="Sprout" autocomplete="off"></div><div class="field tick"><input id="ltick" maxlength="10" placeholder="SPROUT" autocomplete="off" aria-label="Ticker"></div></div></div>
+      <div class="fstep"><div class="fh"><span class="n">3</span>Pond <span class="sub">the coin your fish trades in, and burns</span></div>
+        <div class="field"><input id="lfind" placeholder="Find a pond" autocomplete="off" aria-label="Find a pond"></div>
+        <div class="plist" id="plist"></div>
+        <button type="button" class="lk" id="regbtn">Pond not listed? Register a coin</button>
+        <div class="reg" id="reg" hidden><div class="field"><input id="raddr" placeholder="Paste the coin's address, 0x..." autocomplete="off" spellcheck="false" aria-label="Coin address"></div>
+          <p id="rmsg">It needs at least 1 ETH of liquidity, no transfer tax, no blacklist and no pause switch. After you register it, it warms up for a few minutes while its price is read, then it opens for fish.</p></div></div>
+      <details class="fstep adv"><summary>Extras: a line, links, first buy</summary><div class="inner">
+        <div class="field"><small>A line about your fish</small><textarea id="ldesc" rows="2" maxlength="140" placeholder="The first sprout in the pond."></textarea></div>
+        <div class="frow"><div class="field"><small>X or Telegram</small><input id="llink" placeholder="x.com/yourfish" autocomplete="off"></div><div class="field"><small>First buy</small><input id="lbuy" inputmode="decimal" placeholder="0" autocomplete="off"></div></div>
+        <p id="buynote">Your first buy is in the pond's coin. Launching costs 2.5% of it, nothing else.</p></div></details>
+      <div class="go"><div class="need" id="need"></div><button type="submit" class="gobtn" id="gobtn" disabled>Drop your fish</button><div class="soon" id="soon" hidden>Launching opens soon. This is a preview, so nothing was sent.</div></div>
+    </form>
+    <aside class="lprev" aria-live="polite"><span class="eyebrow">Live preview</span><div class="art" data-scene="launch"></div><h4 id="pvt">$TICKER</h4><div class="in" id="pvin"></div><div class="say" id="pvsay"></div></aside>
+  </div>
+</section></div>
+
 <script src="pond-island.js?v=6"></script>
 <script src="demo-ponds.js?v=3"></script>
 <script>
@@ -514,6 +590,54 @@ scene("fire", 140, 96, sc => { const W = 200, H = 124, ctx = sc.cx, OX = -30, OY
     if (tick >= next) { next = tick + 22 + (Math.random() * 10 | 0); const left = Math.random() < .5; flying.push({ x0: left ? 24 : 176, y0: 38 + Math.random() * 22, x1: 96 + Math.random() * 8, y1: 86, u: 0, n: 500 + (Math.random() * 4500 | 0) }); }
     flying = flying.filter(c => { c.u += 1 / 16; if (c.u >= 1) { flare = 5; burned += c.n; show(); sc.chip(`+${c.n.toLocaleString("en-US")} $PONDS burned`, 100 + OX, 58 + OY, "burn"); return false; }
       const x = c.x0 + (c.x1 - c.x0) * c.u, y = c.y0 + (c.y1 - c.y0) * c.u - 34 * Math.sin(Math.PI * c.u); ctx.drawImage(COINS[SPIN[((tick >> 1) + c.n) % 4]], Math.round(x) - 4, Math.round(y) - 4); return true; }); ctx.setTransform(1, 0, 0, 1, 0, 0); }; });
+
+// ---------- start growing: drop a fish; the preview is the chosen pond with your koi swimming in it ----------
+const LF = { name: "", tick: "", tickTouched: false, color: null, pond: P.slice().sort(byPct)[0], hasPic: false };
+const mineSpec = c => ({ body: [WH, c, c, WH, WH, c, c, WH, WH, WH, WH].map(x => x), fin: "#eef3ff" });
+const plist = document.getElementById("plist"), lfind = document.getElementById("lfind");
+function renderPonds(){ const q = lfind.value.trim().replace(/^\$/, "").toUpperCase(); plist.innerHTML = "";
+  P.slice().sort(byPct).filter(p => !q || p.t.startsWith(q) || p.name.toUpperCase().includes(q)).slice(0, q ? 12 : 6).forEach(p => {
+    const b = document.createElement("button"); b.type = "button"; b.className = "prow" + (p === LF.pond ? " on" : "");
+    b.innerHTML = `<span class="pill" style="background:${p.pc};color:${p.ink};box-shadow:0 2px 0 ${p.edge}">$${p.t}</span><span class="nm">${p.name}</span><span class="v">${p.pct}% burned</span><span class="f">${p.fish} fish</span>`;
+    b.onclick = () => { LF.pond = p; renderPonds(); refresh(true); }; plist.appendChild(b); });
+  if (!plist.children.length) plist.innerHTML = `<div class="need">No pond called that yet. Register it below.</div>`; }
+lfind.oninput = renderPonds;
+document.getElementById("regbtn").onclick = () => { const r = document.getElementById("reg"); r.hidden = !r.hidden; if (!r.hidden) document.getElementById("raddr").focus(); };
+document.getElementById("raddr").oninput = e => { const v = e.target.value.trim(), m = document.getElementById("rmsg");
+  m.textContent = /^0x[0-9a-fA-F]{40}$/.test(v) ? "That looks like a coin address. Registering opens with launching, soon." : "It needs at least 1 ETH of liquidity, no transfer tax, no blacklist and no pause switch. After you register it, it warms up for a few minutes while its price is read, then it opens for fish."; };
+const lname = document.getElementById("lname"), ltick = document.getElementById("ltick");
+lname.oninput = () => { LF.name = lname.value.trim(); if (!LF.tickTouched) { ltick.value = LF.name.replace(/[^a-z0-9]/gi, "").toUpperCase().slice(0, 10); LF.tick = ltick.value; } refresh(false); };
+ltick.oninput = () => { ltick.value = ltick.value.replace(/[^a-z0-9]/gi, "").toUpperCase().slice(0, 10); LF.tick = ltick.value; LF.tickTouched = !!ltick.value; refresh(false); };
+const pic = document.getElementById("lpic"), drop = document.getElementById("drop"), thumb = document.getElementById("thumb");
+function takeFile(f){ if (!f || !/^image\//.test(f.type)) return; const url = URL.createObjectURL(f), im = new Image();
+  im.onload = () => { thumb.innerHTML = ""; thumb.appendChild(im); LF.color = dominantColor(im); LF.hasPic = true; refresh(true); }; im.src = url; }
+pic.onchange = () => takeFile(pic.files[0]);
+["dragenter", "dragover"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add("over"); }));
+["dragleave", "drop"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove("over"); }));
+drop.addEventListener("drop", e => takeFile(e.dataTransfer.files[0]));
+document.getElementById("lbuy").oninput = e => { const v = parseFloat(e.target.value), n = document.getElementById("buynote"), t = LF.pond.t;
+  n.textContent = v > 0 ? `You buy with ${v.toLocaleString("en-US")} ${t}. The launch fee is ${(v * .025).toLocaleString("en-US", { maximumFractionDigits: 4 })} ${t}, 2.5% of it, nothing else.` : "Your first buy is in the pond's coin. Launching costs 2.5% of it, nothing else."; };
+document.getElementById("lform").onsubmit = e => { e.preventDefault(); document.getElementById("soon").hidden = false; };
+let rebuildPreview = () => {};
+function refresh(art){ const t = LF.tick || "TICKER", c = LF.color || "#ff5a3a", pond = LF.pond, missing = [!LF.hasPic && "a picture", !LF.name && "a name"].filter(Boolean);
+  document.getElementById("pvt").textContent = "$" + t;
+  document.getElementById("pvin").textContent = `${LF.name || "Your fish"} · lives in $${pond.t}`;
+  document.getElementById("pvsay").textContent = `Every trade of $${t} pays 1% in ${pond.t}: half of it burns ${pond.t} forever and 30% comes to you, in ${pond.t}. At 2 ETH of volume it graduates and its liquidity is locked forever.`;
+  const need = document.getElementById("need"), btn = document.getElementById("gobtn");
+  need.innerHTML = missing.length ? `Still needed: <b>${missing.join(", ")}</b>.` : `Ready. Your fish drops into $${pond.t}.`;
+  btn.disabled = missing.length > 0; btn.textContent = `Drop $${t} in $${pond.t}`; document.getElementById("soon").hidden = true;
+  if (art) rebuildPreview(); else rebuildPreview.tag && rebuildPreview.tag(); }
+scene("launch", SW, 124, sc => { const bg = whiteBg(SW, 124, [[ix, iy]]); let pond = null, pill = null, tag = null;
+  rebuildPreview = () => { const c = LF.color || "#ff5a3a", p = LF.pond; KOI.mine = mineSpec(c);
+    const base = ["kohaku", "gold", "tancho"].slice(0, Math.max(1, Math.min(3, p.fish)));
+    pond = mkPond({ seed: 7 + P.indexOf(p) * 13, roof: p.ours ? null : p.pc, koi: [...base, "mine"] });
+    if (pill) pill.remove(); pill = mkPill(sc.host, p); at(pill, ix + 64, iy + 99, SW, 124);
+    if (tag) tag.remove(); const me = { t: LF.tick || "TICKER", pc: c, ink: inkFor(c), edge: darkerHex(c, .62) }; tag = mkPill(sc.host, me, `$${me.t}<small>you</small>`); tag.classList.add("tag"); };
+  rebuildPreview.tag = () => { if (tag) tag.innerHTML = `$${LF.tick || "TICKER"}<small>you</small>`; };
+  sc.frame = () => { if (!pond) return; pond.f(); sc.cx.drawImage(bg, 0, 0); sc.cx.drawImage(pond.c, ix, iy); const ks = pond.f.kois, k = ks[ks.length - 1]; at(tag, ix + k.x, iy + k.y - 4, SW, 124); }; });
+renderPonds(); refresh(true);
+// the hero buttons lead here
+document.querySelectorAll(".intro .btn").forEach((b, i) => b.onclick = () => { document.getElementById("launch").scrollIntoView({ behavior: "smooth" }); if (i === 1) { document.getElementById("reg").hidden = false; } });
 
 // ---------- the fee pies: a chunky 3D pixel donut per split, it sweeps in when seen; hovering a row lights its slice ----------
 const SL = { burn: { top: "#ff5a3a", lite: "#ff8d63", side: "#c7391f", sw: "#ff5a3a" }, cr: { top: "#ffd23f", lite: "#ffe58a", side: "#d6a21c", sw: "#ffd23f" }, tr: { top: "#6fc3ff", lite: "#a9dcff", side: "#3b8fd1", sw: "#6fc3ff" } };
