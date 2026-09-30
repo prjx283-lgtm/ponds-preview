@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ponds</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--ink:#0c2a33;--pill:11px}
+html,body{background:#0e1116;color:#eef2f5;font-family:"JetBrains Mono",monospace}
+button{font:inherit;cursor:pointer}
+.hero{position:relative;height:clamp(560px,calc(100vh - 92px),880px);overflow:hidden;background:#2aa845;user-select:none}
+#map{position:absolute;left:0;top:0;image-rendering:pixelated;cursor:grab;touch-action:none}
+#map.grab{cursor:grabbing}
+#pills{position:absolute;inset:0;pointer-events:none}
+.pill{position:absolute;transform:translateX(-50%);display:inline-flex;align-items:center;font:700 var(--pill) Unbounded,sans-serif;letter-spacing:.03em;border-radius:999px;padding:.45em 1em .36em;white-space:nowrap;border:0;pointer-events:auto}
+.pill i{font-style:normal;opacity:.62;margin-right:.55em}
+.pill em{font-style:normal;font-size:.8em;background:#ff5a3a;color:#fff;border-radius:999px;padding:.32em .75em .22em;margin:-.1em -.6em -.1em .8em}
+.pill:hover{filter:brightness(1.1)}
+/* chrome over the map */
+.top{position:absolute;left:0;right:0;top:0;display:flex;align-items:center;gap:14px;padding:18px 22px}
+.mark{font:900 26px Unbounded,sans-serif;letter-spacing:-.02em;color:var(--mark,var(--ink));margin-right:auto}
+.search{position:relative;width:min(340px,40vw)}
+.search input{width:100%;font:500 13px "JetBrains Mono",monospace;color:var(--ink);background:#fff;border:0;border-radius:999px;padding:11px 16px;box-shadow:0 3px 0 rgba(12,42,51,.14);outline:none}
+.search input:focus{box-shadow:0 3px 0 rgba(12,42,51,.14),0 0 0 2px var(--ink)}
+.sugg{position:absolute;left:0;right:0;top:calc(100% + 6px);background:#fff;border-radius:16px;padding:6px;box-shadow:0 8px 24px rgba(12,42,51,.18);display:none}
+.sugg.on{display:block}
+.sugg button{display:flex;align-items:center;gap:10px;width:100%;background:none;border:0;border-radius:10px;padding:7px 8px;color:var(--ink);font-size:12px;text-align:left}
+.sugg button:hover,.sugg button.sel{background:#eef5f8}
+.sugg .pill{position:static;transform:none;--pill:10px}
+.sugg small{margin-left:auto;color:#6a7f88}
+.nav-r{display:flex;gap:8px;margin-left:auto}
+.btn{font:700 12px Unbounded,sans-serif;letter-spacing:.02em;color:var(--ink);background:#fff;border:0;border-radius:999px;padding:11px 18px 10px;box-shadow:0 3px 0 rgba(12,42,51,.14);text-decoration:none;display:inline-block}
+.btn.dark{color:#fff;background:var(--ink);box-shadow:0 3px 0 rgba(0,0,0,.25)}
+.btn:hover{filter:brightness(1.05)}
+.bgs{position:absolute;top:76px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:6px;font-size:11px;color:var(--ink);background:rgba(255,255,255,.72);border-radius:999px;padding:5px 6px 5px 14px}
+.bgs button{font:700 10px Unbounded,sans-serif;color:var(--ink);background:none;border:0;border-radius:999px;padding:6px 11px 5px}
+.bgs button.on{color:#fff;background:var(--ink)}
+.bgs[hidden]{display:none}
+.intro{position:absolute;left:22px;bottom:22px;max-width:410px;background:#fff;color:var(--ink);border-radius:22px;padding:22px 24px;box-shadow:0 4px 0 rgba(12,42,51,.14)}
+.intro h1{font:900 30px/1.08 Unbounded,sans-serif;letter-spacing:-.02em}
+.intro p{font-size:13px;line-height:1.55;color:#3c5560;margin:10px 0 16px}
+.intro .cta{display:flex;gap:8px;flex-wrap:wrap}
+.intro .btn{box-shadow:none;border:2px solid var(--ink);padding:9px 16px 8px}
+.zoom{position:absolute;right:22px;bottom:22px;display:flex;flex-direction:column;gap:6px}
+.zoom button{width:44px;height:44px;font:700 18px Unbounded,sans-serif;color:var(--ink);background:#fff;border:0;border-radius:14px;box-shadow:0 3px 0 rgba(12,42,51,.14)}
+.zoom button.home{font-size:9px}
+.zoom button:disabled{opacity:.4;cursor:default}
+.card{position:absolute;transform:translate(-50%,-100%);width:260px;background:#fff;color:var(--ink);border-radius:18px;padding:14px 16px 16px;box-shadow:0 8px 26px rgba(12,42,51,.22)}
+.card[hidden]{display:none}
+.card .hd{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.card .hd img{width:30px;height:30px;border-radius:50%}
+.card .hd b{font:700 15px Unbounded,sans-serif}
+.card .hd .pill{position:static;transform:none;--pill:9px;margin-top:3px}
+.card .x{margin-left:auto;align-self:flex-start;background:none;border:0;font:700 16px Unbounded,sans-serif;color:#7b8f97;padding:0 2px}
+.card .st{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:14px}
+.card .st div{font-size:10px;color:#6a7f88}
+.card .st b{display:block;font-size:13px;font-weight:500;color:var(--ink);margin-top:2px}
+.card .fz{font:700 10px Unbounded,sans-serif;color:#fff;background:#ff5a3a;border-radius:999px;padding:4px 9px 3px;display:inline-block;margin:-4px 0 12px}
+.card .row{display:flex;gap:6px}
+.card .row .btn{flex:1;text-align:center;box-shadow:none;padding:10px 8px 9px;font-size:11px;border:2px solid var(--ink)}
+.toast{position:absolute;left:50%;bottom:26px;transform:translate(-50%,20px);font:700 11px Unbounded,sans-serif;color:#fff;background:var(--ink);border-radius:999px;padding:9px 16px 8px;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;white-space:nowrap}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid #1f262e}
+.stats div{padding:22px 24px;border-right:1px solid #1f262e;font-size:12px;color:#8b98a5}
+.stats div:last-child{border-right:0}
+.stats b{display:block;font:900 26px Unbounded,sans-serif;color:#eef2f5;margin-top:6px;letter-spacing:-.01em}
+.after{max-width:760px;margin:40px auto;padding:0 24px;color:#8b98a5;font-size:13px;line-height:1.6}
+
+/* how it works: every step shows its own example */
+.how-wrap{background:#fff;color:#0c2a33}
+.how{max-width:1180px;margin:0 auto;padding:96px 24px 60px;--pill:11px}
+.how-head{max-width:720px;margin-bottom:56px}
+.how-head h2{font:900 44px/1.05 Unbounded,sans-serif;letter-spacing:-.02em}
+.how-head p{font-size:15px;line-height:1.6;color:#4f6670;margin-top:14px}
+.step{display:grid;grid-template-columns:1.05fr 1fr;gap:56px;align-items:center;margin-bottom:88px}
+.step:nth-of-type(even) .art{order:2}
+.art{position:relative;background:#fff}
+.art canvas{display:block;width:100%;height:auto;image-rendering:pixelated}
+.art .pill{position:absolute}
+.art .pill.tag{transform:translate(-50%,-100%)}
+.art .pill small{font-size:.78em;opacity:.7;margin-left:.5em}
+.num{font:700 12px Unbounded,sans-serif;color:#7b8f97;letter-spacing:.08em;text-transform:uppercase}
+.step h3{font:900 34px/1.08 Unbounded,sans-serif;letter-spacing:-.015em;margin:12px 0 16px}
+.step p{font-size:15px;line-height:1.65;color:#3c5560}
+.eg{margin-top:20px;background:#f4f7f6;border-radius:18px;padding:18px 20px;font-size:13px;line-height:1.65;color:#1d3640}
+.eg > b{display:block;font:700 11px Unbounded,sans-serif;color:#7b8f97;margin-bottom:6px;letter-spacing:.06em;text-transform:uppercase}
+.coins{display:grid;gap:4px;margin-top:6px}
+.coin{display:grid;grid-template-columns:26px auto 1fr auto;align-items:center;gap:10px;width:100%;background:none;border:0;border-radius:12px;padding:6px 8px;margin:0 -8px;width:calc(100% + 16px);text-align:left;cursor:pointer;color:#1d3640;transition:background .15s}
+.coin:hover,.coin.on{background:#e6eeea}
+.coin img{width:26px;height:26px;border-radius:50%;object-fit:cover;background:#dde6e2}
+.coin .lg{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font:900 12px Unbounded,sans-serif}
+.intro .demo{font-size:11px;color:#6a7f88;margin:12px 0 0}
+@media (prefers-reduced-motion:reduce){.chip{animation:none;opacity:1}.toast{transition:none}}
+.coin .pill{position:static;transform:none;--pill:10px}
+.coin .nm{font-size:12px;color:#4f6670;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.coin .mc{font:700 12px Unbounded,sans-serif}
+.hint{font-size:11px;color:#7b8f97;margin-top:10px}
+.fishes .pill{transform:translate(-50%,0)}
+/* the fee pies */
+.pie-row{display:flex;align-items:center;gap:22px;margin-top:14px}
+.pie-row canvas{width:176px;flex:none;image-rendering:pixelated}
+.pie-leg{flex:1;display:grid;gap:10px}
+.pie-leg .t{font:700 11px Unbounded,sans-serif;color:#7b8f97;letter-spacing:.04em}
+.pie-leg .r{display:grid;grid-template-columns:14px 64px 1fr auto;align-items:center;gap:10px;padding:6px 8px;margin:0 -8px;border-radius:10px;cursor:default;transition:background .15s}
+.pie-leg .r:hover{background:#e8efec}
+.pie-leg .r i{width:14px;height:14px;border-radius:4px;box-shadow:inset 0 -3px 0 rgba(0,0,0,.18)}
+.pie-leg .r em{font:900 22px Unbounded,sans-serif;font-style:normal;letter-spacing:-.02em}
+.pie-leg .r span{font-size:12px;color:#3c5560;line-height:1.35}
+.pie-leg .r b{font:700 12px Unbounded,sans-serif;white-space:nowrap}
+.ctr{position:absolute;left:10px;top:10px;font:500 11px "JetBrains Mono",monospace;color:#0c2a33;background:#f1f5f3;border-radius:999px;padding:6px 12px}
+.ctr b{font:700 11px Unbounded,sans-serif;margin-left:4px}
+.timer{position:absolute;right:10px;top:10px;font:700 11px Unbounded,sans-serif;color:#fff;background:#ff5a3a;border-radius:999px;padding:6px 12px 5px}
+.prog{position:absolute;left:56%;right:12px;top:46%;transform:translateY(-50%);background:#f1f5f3;border-radius:14px;padding:10px 13px;font:500 11px "JetBrains Mono",monospace;color:#0c2a33}
+.prog b{font:700 11px Unbounded,sans-serif}
+.prog .bar{height:8px;border-radius:99px;background:#dde7e2;margin-top:7px;overflow:hidden}
+.prog .bar div{height:100%;width:0;background:#2aa845;border-radius:99px}
+.chip{position:absolute;transform:translate(-50%,-100%);font:700 10px Unbounded,sans-serif;color:#fff;background:#0c2a33;border-radius:999px;padding:5px 10px 4px;white-space:nowrap;pointer-events:none;animation:rise 1.7s ease-out forwards}
+.chip.burn{background:#ff5a3a;color:#fff}
+.chip.done{background:#2aa845;color:#fff}
+@keyframes rise{0%{opacity:0;transform:translate(-50%,-60%)}15%{opacity:1}75%{opacity:1}100%{opacity:0;transform:translate(-50%,-320%)}}
+@media (max-width:860px){.step{grid-template-columns:1fr;gap:26px}.step:nth-of-type(even) .art{order:0}.how-head h2{font-size:32px}.step h3{font-size:26px}.pie-row{flex-direction:column;align-items:stretch}.pie-row canvas{align-self:center}}
+@media (max-width:760px){
+  .top{flex-wrap:wrap}.search{order:3;width:100%}.nav-r .lnk{display:none}.bgs{top:auto;bottom:230px}
+  .intro{right:22px;max-width:none;padding:18px}.intro h1{font-size:24px}.zoom{bottom:auto;top:130px}
+  .stats{grid-template-columns:repeat(2,1fr)}.stats b{font-size:20px}
+}
+</style>
+</head>
+<body>
+<div class="hero" id="hero">
+  <canvas id="map"></canvas>
+  <div id="pills"></div>
+  <nav class="top">
+    <div class="mark">Ponds</div>
+    <div class="search"><input id="q" placeholder="Find a pond, e.g. $MOSS" autocomplete="off" spellcheck="false"><div class="sugg" id="sugg"></div></div>
+    <div class="nav-r"><a class="btn lnk" href="#how">How it works</a><button class="btn dark">Buy $PONDS</button></div>
+  </nav>
+  <div class="bgs" id="bgs" hidden>World <button data-b="field" class="on">Field</button><button data-b="green">Green zen</button><button data-b="zen">Zen garden</button><button data-b="clouds">Cloud sea</button><button data-b="lake">Koi lake</button></div>
+  <div class="intro"><h1>Every coin can be a pond.</h1><p>Drop a fish in any pond. Every fish trade burns the pond's coin.</p><div class="cta"><button class="btn dark">Drop a fish</button><button class="btn">Register a pond</button></div><p class="demo">Preview. The ponds on the map are demo data.</p></div>
+  <div class="zoom"><button id="zin" title="Zoom in">+</button><button id="zout" title="Zoom out">&minus;</button><button id="zhome" class="home" title="Back to $PONDS">HOME</button></div>
+  <div class="card" id="card" hidden></div>
+  <div class="toast" id="toast"></div>
+</div>
+<div class="stats" id="stats"></div>
+<div class="how-wrap"><section class="how" id="how">
+  <div class="how-head"><h2>How it works</h2><p>Six steps, each with an example. In most of them $EXAMPLE is a pond and $SPROUT is a fish living in it.</p></div>
+  <article class="step"><div class="art" data-scene="pond"></div><div class="txt">
+    <span class="num">1 · The pond</span><h3>Any coin can be a pond.</h3>
+    <p>A pond is a coin that already trades on Robinhood Chain, with at least 1 ETH of liquidity. Anyone can register it, once. The pond takes the colour of the coin's logo.</p>
+    <div class="eg"><b>Top on Pons right now</b><div class="coins" id="coins"></div><div class="hint">Hover a coin to see it as a pond.</div></div></div></article>
+  <article class="step"><div class="art" data-scene="fish"></div><div class="txt">
+    <span class="num">2 · The fish</span><h3>Drop a fish in any pond.</h3>
+    <p>A fish is a new coin that lives in a pond. It is bought and sold with the pond's coin, not with ETH. Every fish is a koi, swimming in its pond.</p>
+    <div class="eg"><b>Example</b>You launch $SPROUT in the $EXAMPLE pond: a picture, a name, the pond. People buy $SPROUT with $EXAMPLE. No $EXAMPLE? The site swaps ETH to $EXAMPLE and $EXAMPLE to $SPROUT in one click. Launching costs 2.5% of your first buy, nothing else.</div></div></article>
+  <article class="step"><div class="art" data-scene="trade"></div><div class="txt">
+    <span class="num">3 · The fee</span><h3>Every fish trade burns the pond.</h3>
+    <p>Every buy or sell of a fish pays 1%, in the pond's coin. Half of it is burned forever, so the busier the fish, the smaller the pond's supply.</p>
+    <div class="eg"><b>Example</b>Someone buys 1,000 EXAMPLE of $SPROUT. The fee is 10 EXAMPLE.
+      <div class="pie-row" data-pie="fish"></div></div></div></article>
+  <article class="step"><div class="art" data-scene="grow"></div><div class="txt">
+    <span class="num">4 · Growing up</span><h3>At 2 ETH of volume, a fish leaves the curve.</h3>
+    <p>When a fish reaches 2 ETH of trading volume, it graduates. It moves to a Uniswap pool with 100% of its liquidity locked forever, and its trades keep feeding the pond. It can then become a pond itself, up to 3 deep.</p>
+    <div class="eg"><b>Example</b>$SPROUT has traded 2 ETH in total. Its liquidity is locked for good, and $SPROUT can now be a pond with fish of its own.</div></div></article>
+  <article class="step"><div class="art" data-scene="frenzy"></div><div class="txt">
+    <span class="num">5 · Frenzy</span><h3>Burn $PONDS, start a frenzy.</h3>
+    <p>Anyone can burn $PONDS on any pond to start a frenzy. While it lasts, 70% of that pond's fees burn it instead of 50%, and the pond sits right next to the middle of the map.</p>
+    <div class="eg"><b>Example</b>$EXAMPLE pays the treasury about 0.004 ETH every 10 minutes. 10 minutes of frenzy costs 1.5 times that, so 0.006 ETH of $PONDS, burned. One hour costs 0.036 ETH. You can stack up to 24 hours.
+      <div class="pie-row" data-pie="frenzy"></div></div></div></article>
+  <article class="step"><div class="art" data-scene="fire"></div><div class="txt">
+    <span class="num">6 · $PONDS</span><h3>$PONDS burns itself too.</h3>
+    <p>Every frenzy burns $PONDS. $PONDS is a pond as well, so every trade of a fish living in it burns $PONDS. And a steady buy and burn runs on its own, all the time. Nobody has to remember, nobody has to be trusted.</p></div></article>
+</section></div>
+<script src="pond-island.js?v=6"></script>
+<script src="demo-ponds.js?v=3"></script>
+<script>
+document.fonts.ready.then(() => {
+const P = makeDemoPonds(40), byPct = (a, b) => b.pct - a.pct;
+const hero = document.getElementById("hero"), map = document.getElementById("map"), mx = map.getContext("2d"), pillBox = document.getElementById("pills");
+const rngOf = seed => { let s = seed; return () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296; };
+
+// ---------- the map: ponds scattered naturally, packed outward from $PONDS ----------
+// Slot 0 is the middle; each next slot is the free spot closest to it, so a lower slot means closer to the middle.
+const SLOTS = [[0, 0]];
+{ const r = rngOf(17); let last = 0; const free = (x, y) => SLOTS.every(([a, b]) => ((x - a) / 166) ** 2 + ((y - b) / 114) ** 2 >= 1);
+  while (SLOTS.length < P.length + 12) { let done = false;
+    for (let rad = Math.max(40, last - 60); !done; rad += 7) { const n = Math.max(16, Math.round(rad / 5)), off = r() * 6.283;
+      for (let k = 0; k < n && !done; k++) { const a = off + k / n * 6.283, x = Math.cos(a) * rad * 1.45, y = Math.sin(a) * rad; if (free(x, y)) { SLOTS.push([Math.round(x), Math.round(y)]); last = rad; done = true; } } } } }
+const USED = SLOTS.slice(0, P.length);
+const BX0 = Math.floor(Math.min(...USED.map(a => a[0])) - 300), BX1 = Math.ceil(Math.max(...USED.map(a => a[0])) + 300), BY0 = Math.floor(Math.min(...USED.map(a => a[1])) - 240), BY1 = Math.ceil(Math.max(...USED.map(a => a[1])) + 240);
+let lim = [0, 0, 0, 0];
+function layout(first){
+  const ours = P.find(p => p.ours), order = [ours, ...P.filter(p => p.frenzy).sort(byPct), ...P.filter(p => !p.ours && !p.frenzy).sort(byPct)];
+  order.forEach((p, i) => { [p.tx, p.ty] = SLOTS[i]; p.slot = i; if (first) { p.wx = p.tx; p.wy = p.ty; } });
+  P.slice().sort(byPct).forEach((p, i) => p.rank = i + 1);
+  lim = [Math.min(...P.map(p => p.tx)), Math.max(...P.map(p => p.tx)), Math.min(...P.map(p => p.ty)), Math.max(...P.map(p => p.ty))];
+  P.forEach(p => { if (p.pill) p.pill.innerHTML = pillHTML(p); });
+}
+const pillHTML = p => `<i>${p.rank}</i>$${p.t}` + (p.frenzy ? "<em>frenzy</em>" : "");
+P.forEach(p => { const b = document.createElement("button"); b.className = "pill"; b.style.background = p.pc; b.style.color = p.ink; b.style.boxShadow = `0 2px 0 ${p.edge}`; b.onclick = () => fly(p); pillBox.appendChild(b); p.pill = b; p.logoURL = p.logoCanvas.toDataURL(); });
+layout(true);
+
+// ---------- pixel helpers ----------
+function sprite(w, h, paint){ const c = document.createElement("canvas"); c.width = w; c.height = h; const x = c.getContext("2d"), img = x.createImageData(w, h), b = new Uint32Array(img.data.buffer); paint(b, w, h); x.putImageData(img, 0, 0); return c; }
+const dot = (b, W, H, x, y, c) => { if (x >= 0 && y >= 0 && x < W && y < H) b[y * W + x] = col(c); };
+const gridPaint = (b, W, H, rows, x0, y0, map) => rows.forEach((r, y) => [...r].forEach((ch, x) => { if (map[ch]) dot(b, W, H, x0 + x, y0 + y, map[ch]); }));
+// leafy, stony or cloudy clusters: the front circle wins, a darker line where a front cluster overlaps a back one, light from the top left
+function paintBlob(b, W, H, circles, pal, wrap){
+  const px = new Map(), key = (X, Y) => { if (wrap) { X = ((X % W) + W) % W; Y = ((Y % H) + H) % H; } else if (X < 0 || Y < 0 || X >= W || Y >= H) return -1; return Y * W + X; };
+  circles.forEach(([cx, cy, r], ci) => { for (let Y = Math.floor(cy - r); Y <= Math.ceil(cy + r); Y++) for (let X = Math.floor(cx - r); X <= Math.ceil(cx + r); X++) {
+    if (Math.hypot(X + .5 - cx, Y + .5 - cy) > r) continue; const i = key(X, Y); if (i < 0) continue; const cur = px.get(i); if (!cur || circles[cur.ci][1] <= cy) px.set(i, { ci, X, Y }); } });
+  const who = (X, Y) => { const i = key(X, Y); return i >= 0 && px.has(i) ? px.get(i).ci : -1; };
+  px.forEach(({ ci, X, Y }, i) => { const [cx, cy, r] = circles[ci], l = -((X + .5 - cx) * .8 + (Y + .5 - cy) * 1.1) / r;
+    let c = l > .72 ? pal[5] : l > .2 ? pal[4] : l > -.4 ? pal[3] : pal[2];
+    if (who(X + 1, Y) < 0 || who(X - 1, Y) < 0 || who(X, Y + 1) < 0 || who(X, Y - 1) < 0) c = pal[0];
+    else if ([[0, 1], [1, 0], [-1, 0]].some(([a, bb]) => { const cj = who(X + a, Y + bb); return cj !== ci && circles[cj][1] > cy; })) c = pal[1];
+    b[i] = col(c); }); }
+// a dithered oval for shadows cast by floating islands
+const shadowSprite = (rx, ry, c) => sprite(rx * 2 + 1, ry * 2 + 1, (b, W, H) => { for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { const d = ((x - rx) / rx) ** 2 + ((y - ry) / ry) ** 2; if (d <= 1 && (d < .45 || ((x + y) & 1) === 0)) b[y * W + x] = col(c); } });
+const LEAF = ["#0c383c", "#115c3c", "#1a843e", "#2aa845", "#56c94a", "#a4e86a"], STONE = ["#3f3c45", "#6f6b78", "#8a8698", "#8a8698", "#b8b4c6", "#dedbe8"];
+
+// ---------- world 1: the zen garden ----------
+// o: base, groove, ridge colours; reach and step set how far the circles go and how tight they are; rocks, decor, petals switch the extras on
+function makeZen(o){
+  const SAND = col(o.base), GROOVE = col(o.groove), RIDGE = col(o.ridge), r = rngOf(61);
+  const eFrom = (x, y, cx, cy, rx, ry) => (Math.hypot((x - cx) / rx, (y - cy) / ry) - 1) * ry;
+  const eNear = (x, y) => Math.min(...USED.map(([a, b]) => eFrom(x, y, a, b + 4, 62, 30)));
+  const rocks = [];
+  if (o.rocks) for (let t = 0; t < 4000 && rocks.length < 16; t++) { const x = BX0 + 180 + r() * (BX1 - BX0 - 360), y = BY0 + 140 + r() * (BY1 - BY0 - 280);
+    if (eNear(x, y) < 58 || rocks.some(o => Math.hypot(o.x - x, (o.y - y) * 1.4) < 120)) continue; rocks.push({ x: Math.round(x), y: Math.round(y) }); }
+  const W = BX1 - BX0, H = BY1 - BY0, E = new Float32Array(W * H).fill(1e9);
+  const ring = (cx, cy, rx, ry, reach) => { const x0 = Math.max(0, Math.floor(cx - rx - reach * rx / ry - BX0)), x1 = Math.min(W - 1, Math.ceil(cx + rx + reach * rx / ry - BX0)), y0 = Math.max(0, Math.floor(cy - ry - reach - BY0)), y1 = Math.min(H - 1, Math.ceil(cy + ry + reach - BY0));
+    for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) { const e = eFrom(x + BX0 + .5, y + BY0 + .5, cx, cy, rx, ry); if (e < reach && e < E[y * W + x]) E[y * W + x] = e; } };
+  const reach = o.reach || 42, step = o.step || 6;
+  USED.forEach(([a, b]) => ring(a, b + 4, 62, 30, reach));
+  rocks.forEach(o => ring(o.x, o.y - 3, 10, 6, 24));
+  const straight = (X, Y) => { const m = ((Y + Math.round(1.5 * Math.sin(X * Math.PI / 64))) % 6 + 6) % 6; return m === 0 ? GROOVE : m === 1 ? RIDGE : SAND; };
+  const big = sprite(W, H, b => { for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { const e = E[y * W + x];
+    if (e < 1e8) { const m = Math.floor(e) % step; b[y * W + x] = e < 0 ? SAND : m === 0 ? GROOVE : m === 1 ? RIDGE : SAND; } else b[y * W + x] = straight(x + BX0, y + BY0); } });
+  const tile = sprite(128, 6, (b, w, h) => { for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) b[y * w + x] = straight(x, y); });
+  // decor: sakura trees and lanterns outside the raked rings, rocks inside their own rings
+  const PINK = ["#6a2e44", "#b8577e", "#e27ba2", "#f59ac0", "#ffc4dc", "#ffe8f1"], j = a => a + (r() - .5) * 2;
+  const trees = [...Array(4)].map(() => sprite(32, 38, (b, W, H) => {
+    for (let x = 10; x <= 22; x++) { dot(b, W, H, x, 37, "#e3d6ba"); } [[8, 36], [13, 37], [24, 36], [19, 37]].forEach(([x, y]) => dot(b, W, H, x, y, "#f59ac0"));
+    for (let y = 22; y <= 36; y++) { dot(b, W, H, 14, y, "#3a2020"); dot(b, W, H, 15, y, "#5e3530"); dot(b, W, H, 16, y, "#7e4c40"); } dot(b, W, H, 13, 36, "#5e3530"); dot(b, W, H, 17, 36, "#5e3530"); dot(b, W, H, 17, 26, "#5e3530"); dot(b, W, H, 18, 25, "#5e3530");
+    paintBlob(b, W, H, [[16, j(10), j(9)], [j(8), j(15), 6.5], [j(24), j(15), 6.5], [j(11), 21, 5.5], [j(21), 21, 5.5]], PINK); }));
+  const LANTERN = ["....OOO.....", "...OsSsO....", ".OOOOOOOOO..", "OsSSSSSSSsO.", ".OOOOOOOOO..", "..OsYYYsO...", "..OsYyYsO...", "..OOOOOOO...", "...OsSsO....", "...OsSsO....", "...OsSsO....", "..OOOOOOO...", ".OsSSSSSsO..", ".OOOOOOOOO..", "..dddddddd.."];
+  const lantern = sprite(12, 15, (b, W, H) => gridPaint(b, W, H, LANTERN, 0, 0, { O: "#3a3844", s: "#8a8698", S: "#bcb8ca", Y: "#ffd98a", y: "#fff2c4", d: "#d9caa9" }));
+  const rockSpr = [...Array(3)].map(() => sprite(18, 12, (b, W, H) => { paintBlob(b, W, H, [[j(7), 7, 5], [j(12), 7.5, 4]], STONE); for (let k = 0; k < 6; k++) { const x = 4 + r() * 10 | 0; for (let y = 0; y < H; y++) if (b[y * W + x]) { dot(b, W, H, x, y + 1, "#56c94a"); if (k & 1) dot(b, W, H, x, y + 2, "#2aa845"); break; } } }));
+  const moss = [...Array(3)].map(() => sprite(18, 10, (b, W, H) => paintBlob(b, W, H, [[j(6), 6, 4], [j(11), 5.5, 4.5], [j(14), 7, 3]], LEAF)));
+  const decor = rocks.map((o, i) => ({ x: o.x, y: o.y + 3, spr: rockSpr[i % 3] })), okSpot = (x, y, gap) => decor.every(o => Math.hypot(o.x - x, (o.y - y) * 1.3) >= gap);
+  if (o.decor) for (let t = 0; t < 5000 && decor.length < 90; t++) { const x = BX0 + r() * W, y = BY0 + r() * H, e = eNear(x, y); if (e < 48 || rocks.some(o => Math.hypot(o.x - x, (o.y - y) * 1.4) < 44) || !okSpot(x, y, 40)) continue;
+    const k = r(); decor.push({ x: Math.round(x), y: Math.round(y), spr: k < .45 ? trees[r() * 4 | 0] : k < .7 ? moss[r() * 3 | 0] : k < .82 && e < 70 ? lantern : moss[r() * 3 | 0] }); }
+  const PETALS = [...Array(o.petals ? 18 : 0)].map((_, i) => ({ x: Math.random(), y: Math.random(), s: .6 + Math.random() * .6, c: i % 3 ? "#ffc4dc" : "#f59ac0" }));
+  return {
+    under(ox, oy){ const sx = ((Math.round(ox) % 128) + 128) % 128 - 128, sy = ((Math.round(oy) % 6) + 6) % 6 - 6;
+      for (let X = sx; X < VW; X += 128) for (let Y = sy; Y < VH; Y += 6) mx.drawImage(tile, X, Y);
+      mx.drawImage(big, Math.round(ox + BX0), Math.round(oy + BY0)); },
+    decor,
+    over(tick){ PETALS.forEach((p, i) => { p.x += .0009 * p.s; p.y += .0016 * p.s; if (p.y > 1.02) { p.y = -.02; p.x = Math.random(); } if (p.x > 1.02) p.x = -.02;
+      const x = Math.round(p.x * VW + Math.sin((tick + i * 7) * .12) * 3), y = Math.round(p.y * VH); mx.fillStyle = p.c; mx.fillRect(x, y, 2, 1); if (((tick >> 2) + i) & 1) mx.fillRect(x + 1, y + 1, 1, 1); }); },
+  };
+}
+const ZEN = makeZen({ base: "#efe5cf", groove: "#d9caa9", ridge: "#fbf6e9", rocks: true, decor: true, petals: true });
+const ZEN_GREEN = makeZen({ base: "#2aa845", groove: "#219a3d", ridge: "#3ab751", reach: 11, step: 4 });
+
+// ---------- world 2: the cloud sea ----------
+const CLOUDS = (() => {
+  const TW = 384, TH = 288, r = rngOf(83), PAL = ["#a6c6dc", "#c2d8ea", "#d6e8f5", "#e8f2fa", "#f6fbfe", "#ffffff"];
+  const tile = sprite(TW, TH, (b, W, H) => { b.fill(col("#c9dff0"));
+    const blobs = [...Array(34)].map(() => { const cx = r() * W, cy = r() * H, n = 3 + (r() * 3 | 0), c = []; for (let k = 0; k < n; k++) c.push([cx + (k - n / 2) * (8 + r() * 6), cy + (r() - .5) * 8 - Math.abs(k - n / 2) * -2, 9 + r() * 12]); return c; }).sort((a, b) => a[0][1] - b[0][1]);
+    blobs.forEach(c => paintBlob(b, W, H, c, PAL, true)); });
+  const shadow = shadowSprite(48, 9, "#9fbcd2"), BIRDS = [[.2, .45, 0], [.34, .38, 500], [.14, .3, 1100]];
+  return {
+    under(ox, oy, tick, vis){ const px = ox * .6 - tick * .08, py = oy * .6, sx = ((Math.round(px) % TW) + TW) % TW - TW, sy = ((Math.round(py) % TH) + TH) % TH - TH;
+      for (let X = sx; X < VW; X += TW) for (let Y = sy; Y < VH; Y += TH) mx.drawImage(tile, X, Y);
+      vis.forEach(o => mx.drawImage(shadow, o.x + 64 - 48, o.y + 116 - 9)); },
+    decor: [],
+    over(tick){ mx.fillStyle = "#5a7f9a"; BIRDS.forEach(([fy, sp, ph], i) => { const x = Math.round((tick * sp + ph) % (VW + 80)) - 40, y = Math.round(VH * fy + Math.sin((tick + ph) * .05) * 3), up = ((tick >> 2) + i) & 1;
+      (up ? [[0, 0], [4, 0], [1, 1], [3, 1], [2, 2]] : [[0, 1], [1, 1], [3, 1], [4, 1], [2, 2]]).forEach(([a, b]) => mx.fillRect(x + a, y + b, 1, 1)); }); },
+  };
+})();
+
+// ---------- world 3: the koi lake ----------
+const LAKE = (() => {
+  const TW = 256, TH = 192, r = rngOf(97), T = Math.PI * 2;
+  const tile = sprite(TW, TH, (b, W, H) => { const B = col("#2386ec"), L = col("#3a9df2"), D = col("#1d3aa6"), C = col("#8ad8ff");
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { const n = Math.sin(x / W * T * 2 + Math.sin(y / H * T * 2) * 1.2) + Math.sin(y / H * T * 3 - x / W * T); b[y * W + x] = n > 1.1 ? L : B; }
+    for (let gy = 0; gy < H; gy += 12) for (let gx = 0; gx < W; gx += 24) { if (r() < .35) continue; const x0 = gx + (r() * 14 | 0), y0 = gy + (r() * 6 | 0), w = 4 + (r() * 5 | 0);
+      for (let x = x0; x < x0 + w; x++) b[(y0 % H) * W + (x % W)] = D; for (let x = x0 + 1; x < x0 + w - 1; x++) b[((y0 + 1) % H) * W + (x % W)] = D;
+      if (r() < .3) for (let x = x0 + 2; x < x0 + 5; x++) b[((y0 + 4) % H) * W + ((x + 7) % W)] = C; } });
+  const pads = [];
+  const padSpr = (rad, flower) => sprite(rad * 2 + 4, rad * 2 + 4, (b, W, H) => { const c = rad + 2;
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { const dx = x + .5 - c, dy = (y + .5 - c) * 1.25, d = Math.hypot(dx, dy); if (d > rad) continue; const a = Math.atan2(dy, dx); if (Math.abs(a - .5) < .3 && d > 1.5) continue;
+      const l = -(dx + dy) / rad; b[y * W + x] = col(d > rad - 1 ? (dx + dy > 0 ? "#115c3c" : "#1a843e") : l > .5 ? "#62c64c" : l > -.2 ? "#2d9a3a" : "#1f7a32"); }
+    if (flower) { gridPaint(b, W, H, [".w.w.", "wpwpw", "qpypq", ".qqq."], c - 3, c - 4, { w: "#ffffff", p: "#f7a3c4", q: "#e0668a", y: "#ffd23f" }); } });
+  const SPR = [padSpr(7, false), padSpr(9, true), padSpr(11, false), padSpr(8, true), padSpr(6, false)];
+  for (let i = 0; i < 70; i++) pads.push({ x: BX0 + r() * (BX1 - BX0), y: BY0 + r() * (BY1 - BY0), spr: SPR[r() * SPR.length | 0] });
+  const GLINTS = [...Array(40)].map(() => ({ x: r(), y: r(), ph: r() * 30 | 0, k: r() * 3 | 0 }));
+  // giant koi gliding under the surface, in muted underwater colours
+  const WB = [35, 134, 236], mix = (h, k) => "#" + [16, 8, 0].map((s, i) => Math.round(((parseInt(h.slice(1), 16) >> s) & 255) * k + WB[i] * (1 - k)).toString(16).padStart(2, "0")).join("");
+  const BIGS = [["kohaku", -120, 60, 0], ["gold", 200, -90, 2.4], ["sakura", -40, -150, 4.2]].map(([n, x, y, a]) => {
+    const body = KOI[n].body.map(h => col(mix(h, .72))), fin = col(mix(KOI[n].fin, .55)), trail = []; for (let t = 0; t < 70; t++) trail.push([x - Math.cos(a) * t * .5, y - Math.sin(a) * t * .5]);
+    return { x, y, a, turn: 0, body, fin, trail }; });
+  const R = [1.35, 1.75, 1.95, 1.95, 1.85, 1.65, 1.4, 1.15, .95, .75, .6].map(v => v * 3.2);
+  function stepKoi(k){ if (Math.hypot(k.x, k.y * 1.4) > 560) { let d = Math.atan2(-k.y, -k.x) - k.a; d = Math.atan2(Math.sin(d), Math.cos(d)); k.a += Math.sign(d) * .025; } else { if (Math.random() < .02) k.turn = (Math.random() - .5) * .03; k.a += k.turn; }
+    k.x += Math.cos(k.a) * .32; k.y += Math.sin(k.a) * .32; const [lx, ly] = k.trail[0]; if (Math.hypot(k.x - lx, k.y - ly) >= .5) { k.trail.unshift([k.x, k.y]); k.trail.length = 70; } }
+  function drawKoi(k, sx, sy, tick){ const pts = R.map((_, s) => k.trail[s * 6]), body = new Map();
+    pts.forEach(([x, y], s) => { const rad = R[s], X0 = Math.floor(x + sx - rad), Y0 = Math.floor(y + sy - rad); for (let Y = Y0; Y <= Y0 + rad * 2 + 1; Y++) for (let X = X0; X <= X0 + rad * 2 + 1; X++) { const d = Math.hypot(X + .5 - x - sx, Y + .5 - y - sy) / rad; if (d > 1) continue; const key = Y * 4096 + X, cur = body.get(key); if (!cur || d < cur.d) body.set(key, { d, s, X, Y }); } });
+    const fins = [], [tx, ty] = pts[10], [qx, qy] = pts[8], ta = Math.atan2(ty - qy, tx - qx), wig = Math.sin(tick * .3) * .25;
+    [ta + .6 + wig, ta - .6 + wig].forEach(a => { for (let t = 1; t <= 8; t++) { fins.push([Math.floor(tx + sx + Math.cos(a) * t), Math.floor(ty + sy + Math.sin(a) * t)]); fins.push([Math.floor(tx + sx + Math.cos(a) * t + Math.cos(a + 1.57)), Math.floor(ty + sy + Math.sin(a) * t + Math.sin(a + 1.57))]); } });
+    const [hx, hy] = pts[0], [bx, by] = pts[3], [fx, fy] = pts[2], ba = Math.atan2(by - hy, bx - hx), fl = ((tick >> 3) & 1) * .2;
+    [ba + 1.15 + fl, ba - 1.15 - fl].forEach(a => { for (let t = 5; t <= 11; t++) { fins.push([Math.floor(fx + sx + Math.cos(a) * t), Math.floor(fy + sy + Math.sin(a) * t)]); fins.push([Math.floor(fx + sx + Math.cos(a) * t + Math.cos(a - 1.57)), Math.floor(fy + sy + Math.sin(a) * t + Math.sin(a - 1.57))]); } });
+    mx.fillStyle = "#" + (k.fin & 0xffffff).toString(16).padStart(6, "0").replace(/(..)(..)(..)/, "$3$2$1"); fins.forEach(([X, Y]) => { if (!body.has(Y * 4096 + X)) mx.fillRect(X, Y, 1, 1); });
+    const hex = c => "#" + (c & 0xffffff).toString(16).padStart(6, "0").replace(/(..)(..)(..)/, "$3$2$1");
+    body.forEach(({ s, X, Y }, key) => { const edge = !body.has(key + 1) || !body.has(key + 4096); mx.fillStyle = hex(edge ? shade(k.body[s], .88) : k.body[s]); mx.fillRect(X, Y, 1, 1); }); }
+  const shadow = shadowSprite(50, 10, "#1a4fb0");
+  return {
+    under(ox, oy, tick, vis){ const px = ox * .85, py = oy * .85, drift = (tick >> 1) * .25, sx = ((Math.round(px - drift) % TW) + TW) % TW - TW, sy = ((Math.round(py) % TH) + TH) % TH - TH;
+      for (let X = sx; X < VW; X += TW) for (let Y = sy; Y < VH; Y += TH) mx.drawImage(tile, X, Y);
+      BIGS.forEach(k => { stepKoi(k); drawKoi(k, px, py, tick); });
+      mx.fillStyle = "#ffffff"; GLINTS.forEach(g => { if ((tick + g.ph) % 30 >= 18) return; const x = Math.round(g.x * VW), y = Math.round(g.y * VH); if (g.k === 0) mx.fillRect(x, y, 3, 1); else if (g.k === 1) { mx.fillRect(x, y, 1, 1); mx.fillRect(x + 1, y - 1, 1, 1); mx.fillRect(x + 2, y - 2, 1, 1); } else { mx.fillRect(x - 1, y, 3, 1); mx.fillRect(x, y - 1, 1, 3); } });
+      pads.forEach(d => { const x = Math.round(d.x + px) - (d.spr.width >> 1), y = Math.round(d.y + py) - (d.spr.height >> 1); if (x > -30 && x < VW && y > -30 && y < VH) mx.drawImage(d.spr, x, y); });
+      vis.forEach(o => mx.drawImage(shadow, o.x + 64 - 50, o.y + 118 - 10)); },
+    decor: [],
+    over(){},
+  };
+})();
+
+// ---------- world 0: the field, kept simple: one flat green, small tufts, a few flowers, butterflies ----------
+const FIELD = (() => {
+  const N = 192, r = rngOf(23);
+  const blade = (b, W, H, bx, by, h, lean) => { for (let j = 0; j < h; j++) { const t = j / Math.max(1, h - 1), cx = bx + lean * t * t, hw = Math.pow(1 - t, .8); let xl = Math.round(cx - hw), xr = Math.round(cx + hw) - 1; if (xr < xl) xr = xl;
+    for (let x = xl; x <= xr; x++) b[(((by - j) % H) + H) % H * W + ((x % W) + W) % W] = col(j >= h - 1 ? "#a4e86a" : x === xl && xr > xl ? "#1a843e" : "#56c94a"); } };
+  const tile = sprite(N, N, (b, W, H) => { b.fill(col("#2aa845"));
+    for (let gy = 0; gy < H; gy += 20) for (let gx = 0; gx < W; gx += 24) { if (r() < .3) continue; const x = gx + (r() * 16 | 0), y = gy + 4 + (r() * 12 | 0), n = 2 + (r() * 2 | 0);
+      for (let k = 0; k < n; k++) blade(b, W, H, x + k * 2, y, 3 + (r() * 3 | 0), (k - (n - 1) / 2) * 1.6); }
+    for (let i = 0; i < 14; i++) { const x = r() * W | 0, y = r() * H | 0; b[y * W + x] = col(["#ffffff", "#ffd23f", "#ffffff", "#f7a3c4"][i % 4]); b[((y + 1) % H) * W + x] = col("#1a843e"); } });
+  const BUTTER = ["#ffffff", "#ffe066", "#ffb3cf", "#ffffff", "#bfe3ff"].map((c, i) => ({ x: (i - 2) * 90, y: ((i * 37) % 5 - 2) * 50, a: i * 1.3, c }));
+  return {
+    under(ox, oy){ const sx = ((Math.round(ox) % N) + N) % N - N, sy = ((Math.round(oy) % N) + N) % N - N; for (let X = sx; X < VW; X += N) for (let Y = sy; Y < VH; Y += N) mx.drawImage(tile, X, Y); },
+    decor: [],
+    over(tick){ BUTTER.forEach((b, i) => { b.a += (Math.random() - .5) * .5; b.x += Math.cos(b.a) * .7; b.y += Math.sin(b.a) * .45;
+      if (Math.abs(b.x - cam.x) > VW * .7 || Math.abs(b.y - cam.y) > VH * .7) { b.x = cam.x + (Math.random() - .5) * VW; b.y = cam.y + (Math.random() - .5) * VH; }
+      const sx = Math.round(b.x + VW / 2 - cam.x), sy = Math.round(b.y + VH / 2 - cam.y + Math.sin((tick + i * 5) * .4) * 1.5), up = ((tick >> 1) + i) & 1;
+      mx.fillStyle = b.c; if (up) { mx.fillRect(sx - 2, sy - 2, 2, 2); mx.fillRect(sx + 1, sy - 2, 2, 2); } else { mx.fillRect(sx - 2, sy - 1, 2, 1); mx.fillRect(sx + 1, sy - 1, 2, 1); }
+      mx.fillStyle = "#2b2140"; mx.fillRect(sx, sy - 2, 1, 2); }); },
+  };
+})();
+
+const WORLDS = {
+  field:  { W: FIELD,  mode: "field",  pill: 89, bg: "#2aa845", mark: "#0c2a33" },
+  green:  { W: { under: (ox, oy) => ZEN_GREEN.under(ox, oy), decor: [], over: t => FIELD.over(t) }, mode: "field", pill: 89, bg: "#2aa845", mark: "#0c2a33" },
+  zen:    { W: ZEN,    mode: "patch",  pill: 95, bg: "#efe5cf", mark: "#0c2a33" },
+  clouds: { W: CLOUDS, mode: "island", pill: 99, bg: "#c9dff0", mark: "#0c2a33" },
+  lake:   { W: LAKE,   mode: "island", pill: 99, bg: "#2386ec", mark: "#ffffff" },
+};
+let world = "green";
+const setWorld = w => { world = w; hero.style.background = WORLDS[w].bg; hero.style.setProperty("--mark", WORLDS[w].mark); document.querySelectorAll("#bgs button").forEach(b => b.classList.toggle("on", b.dataset.b === w)); };
+document.getElementById("bgs").onclick = e => { const b = e.target.closest("button"); if (b) setWorld(b.dataset.b); };
+setWorld("green");
+
+// ---------- camera, zoom, drag ----------
+let Z = innerWidth >= 1200 ? 3 : 2, VW = 0, VH = 0, glide = null; const cam = { x: 0, y: 0 };
+function resize(){ const r = hero.getBoundingClientRect(); VW = Math.ceil(r.width / Z); VH = Math.ceil(r.height / Z); map.width = VW; map.height = VH; map.style.width = VW * Z + "px"; map.style.height = VH * Z + "px"; mx.imageSmoothingEnabled = false;
+  hero.style.setProperty("--pill", Z >= 3 ? "11px" : Z === 2 ? "10px" : "8px"); document.getElementById("zin").disabled = Z >= 4; document.getElementById("zout").disabled = Z <= 1; }
+new ResizeObserver(resize).observe(hero);
+const clampCam = () => { cam.x = Math.max(lim[0] - 60, Math.min(lim[1] + 60, cam.x)); cam.y = Math.max(lim[2] - 60, Math.min(lim[3] + 60, cam.y)); };
+document.getElementById("zin").onclick = () => { Z = Math.min(4, Z + 1); resize(); };
+document.getElementById("zout").onclick = () => { Z = Math.max(1, Z - 1); resize(); };
+document.getElementById("zhome").onclick = () => { glide = { x: 0, y: 0 }; closeCard(); };
+let drag = null;
+map.addEventListener("pointerdown", e => { drag = { x: e.clientX, y: e.clientY, moved: 0 }; map.setPointerCapture(e.pointerId); map.classList.add("grab"); glide = null; });
+map.addEventListener("pointermove", e => { if (!drag) return; const dx = e.clientX - drag.x, dy = e.clientY - drag.y; cam.x -= dx / Z; cam.y -= dy / Z; clampCam(); drag.moved += Math.abs(dx) + Math.abs(dy); drag.x = e.clientX; drag.y = e.clientY; });
+map.addEventListener("pointerup", e => { map.classList.remove("grab"); const d = drag; drag = null; if (!d || d.moved > 5) return;
+  const r = map.getBoundingClientRect(), wx = (e.clientX - r.left) / Z - VW / 2 + cam.x, wy = (e.clientY - r.top) / Z - VH / 2 + cam.y;
+  const hit = P.filter(p => wx > p.wx - 58 && wx < p.wx + 58 && wy > p.wy - 38 && wy < p.wy + 40).sort((a, b) => b.wy - a.wy)[0]; hit ? fly(hit) : closeCard(); });
+
+// ---------- search, the pond card, the toast ----------
+const q = document.getElementById("q"), sugg = document.getElementById("sugg"); let matches = [], sel = 0;
+function renderSugg(){ sugg.innerHTML = ""; matches.forEach((p, i) => { const b = document.createElement("button"); if (i === sel) b.className = "sel";
+  b.innerHTML = `<span class="pill" style="background:${p.pc};color:${p.ink}">$${p.t}</span>${p.name}<small>#${p.rank}</small>`; b.onmousedown = e => { e.preventDefault(); pick(p); }; sugg.appendChild(b); }); sugg.classList.toggle("on", matches.length > 0); }
+q.oninput = () => { const s = q.value.trim().replace(/^\$/, "").toUpperCase(); matches = s ? P.filter(p => p.t.startsWith(s) || p.name.toUpperCase().startsWith(s)).sort(byPct).slice(0, 6) : []; sel = 0; renderSugg(); };
+q.onkeydown = e => { if (e.key === "ArrowDown") { sel = Math.min(matches.length - 1, sel + 1); renderSugg(); e.preventDefault(); } else if (e.key === "ArrowUp") { sel = Math.max(0, sel - 1); renderSugg(); e.preventDefault(); }
+  else if (e.key === "Enter" && matches[sel]) pick(matches[sel]); else if (e.key === "Escape") { q.value = ""; matches = []; renderSugg(); q.blur(); } };
+q.onblur = () => sugg.classList.remove("on");
+const pick = p => { q.value = "$" + p.t; matches = []; renderSugg(); q.blur(); fly(p); };
+const card = document.getElementById("card"); let open = null;
+function fly(p){ glide = { x: p.tx, y: p.ty - 34 / Z * 2 }; open = p;
+  card.innerHTML = `<div class="hd"><img src="${p.logoURL}" alt=""><div><b>${p.name}</b><br><span class="pill" style="background:${p.pc};color:${p.ink}">$${p.t}</span></div><button class="x" title="Close">&times;</button></div>
+    ${p.frenzy ? `<span class="fz">Frenzy ${p.frenzy} left</span>` : ""}<div class="st"><div>Burned<b>${p.pct}%</b></div><div>Fish<b>${p.fish}</b></div><div>Liquidity<b>${p.liq} ETH</b></div></div>
+    <div class="row"><button class="btn dark">Buy $${p.t}</button><button class="btn">Drop a fish</button></div>`;
+  card.querySelector(".x").onclick = closeCard; card.hidden = false; }
+function closeCard(){ open = null; card.hidden = true; }
+const toast = document.getElementById("toast"); let toastT = 0;
+setInterval(() => { const cand = P.filter(p => !p.ours && !p.frenzy && p.slot >= 8); if (!cand.length) return; const p = cand[Math.random() * cand.length | 0];
+  const order = P.filter(o => !o.ours && !o.frenzy).sort(byPct), beat = order[Math.max(0, order.indexOf(p) - 3 - (Math.random() * 4 | 0))];
+  p.pct = +(beat.pct + .01).toFixed(2); layout(false);
+  toast.textContent = `$${p.t} burned more and moved closer to the middle`; toast.classList.add("on"); clearTimeout(toastT); toastT = setTimeout(() => toast.classList.remove("on"), 3200); }, 7000);
+
+// ---------- stats under the map ----------
+document.getElementById("stats").innerHTML = `<div>Ponds<b>${P.length}</b></div><div>Fish swimming<b>${P.reduce((s, p) => s + p.fish, 0)}</b></div><div>Burned in all ponds<b>$2.41M</b></div><div>$PONDS burned<b>4.1%</b></div>`;
+
+
+// ---------- how it works: every step shows its own example, $EXAMPLE the pond and $SPROUT the fish ----------
+const MOSS = P.find(p => p.t === "MOSS"), EX = { t: "EXAMPLE", pc: MOSS.pc, ink: MOSS.ink, edge: MOSS.edge }, OURS = P.find(p => p.ours), SPROUT = { t: "SPROUT", pc: "#8fd14f" }; SPROUT.ink = inkFor(SPROUT.pc); SPROUT.edge = darkerHex(SPROUT.pc, .62);
+// white ground: each floating island gets a soft dithered shadow under it
+const whiteBg = (W, H, spots) => sprite(W, H, b => { b.fill(col("#ffffff")); const SH = col("#e1e8e5");
+  spots.forEach(([x0, y0]) => { const cx = x0 + 64, cy = y0 + 112; for (let y = cy - 7; y <= cy + 7; y++) for (let x = cx - 46; x <= cx + 46; x++) { if (x < 0 || y < 0 || x >= W || y >= H) continue; const d = ((x - cx) / 46) ** 2 + ((y - cy) / 7) ** 2; if (d <= 1 && (d < .45 || ((x + y) & 1) === 0)) b[y * W + x] = SH; } }); });
+const mkPond = opts => { const c = document.createElement("canvas"); return { c, f: buildIsland(c, WATER.blue, { clear: true, ...opts }) }; };
+const mkPill = (host, p, html) => { const b = document.createElement("span"); b.className = "pill"; b.style.background = p.pc; b.style.color = p.ink; b.style.boxShadow = `0 2px 0 ${p.edge}`; b.innerHTML = html || "$" + p.t; host.appendChild(b); return b; };
+const at = (el, x, y, W, H) => { el.style.left = x / W * 100 + "%"; el.style.top = y / H * 100 + "%"; };
+const SCENES = [];
+function scene(name, W, H, setup){ const host = document.querySelector(`[data-scene=${name}]`), cv = document.createElement("canvas"); cv.width = W; cv.height = H; host.prepend(cv);
+  const sc = { host, W, H, cx: cv.getContext("2d"), visible: false, chip(text, x, y, cls){ const c = document.createElement("span"); c.className = "chip " + (cls || ""); c.textContent = text; at(c, x, y, W, H); host.appendChild(c); setTimeout(() => c.remove(), 1750); } };
+  sc.cx.imageSmoothingEnabled = false; setup(sc); SCENES.push(sc); new IntersectionObserver(es => es.forEach(e => sc.visible = e.isIntersecting)).observe(host); }
+const MOSS_KOI = ["gold", "kohaku", "tancho", "sakura"], ix = 36, iy = 4;
+// 1 the pond: no name until you pick a coin from the Pons list, then it takes that coin's name and colour
+scene("pond", 200, 124, sc => { const bg = whiteBg(200, 124, [[ix, iy]]), cache = {}, plain = mkPond({ seed: 20, koi: MOSS_KOI }); let cur = null, pill = null;
+  const pondFor = c => c ? (cache[c.t] || (cache[c.t] = mkPond({ seed: 20, roof: c.color, koi: MOSS_KOI }))) : plain;
+  const pick = c => { cur = c; if (pill) { pill.remove(); pill = null; }
+    if (c) { pill = mkPill(sc.host, { t: c.t, pc: c.color, ink: inkFor(c.color), edge: darkerHex(c.color, .62) }); at(pill, ix + 64, iy + 99, 200, 124); }
+    document.querySelectorAll(".coin").forEach(b => b.classList.toggle("on", !!c && b.dataset.t === c.t)); };
+  const fmt = n => n >= 1e9 ? "$" + (n / 1e9).toFixed(1) + "B" : n >= 1e6 ? "$" + Math.round(n / 1e6) + "M" : "$" + Math.round(n / 1e3) + "K";
+  fetch("pons-top.json").then(r => r.json()).then(d => { const box = document.getElementById("coins");
+    d.coins.forEach(c => { const b = document.createElement("button"); b.className = "coin"; b.dataset.t = c.t;
+      const logo = c.logo ? `<img src="${c.logo}" alt="" loading="lazy" referrerpolicy="no-referrer">` : `<span class="lg" style="background:${c.color};color:${inkFor(c.color)}">${c.t[0]}</span>`;
+      b.innerHTML = `${logo}<span class="pill" style="background:${c.color};color:${inkFor(c.color)};box-shadow:0 2px 0 ${darkerHex(c.color, .62)}">$${c.t}</span><span class="nm">${c.name}</span><span class="mc">${fmt(c.mcap)}</span>`;
+      b.onmouseenter = () => pick(c); b.onfocus = () => pick(c); b.onclick = () => pick(c); box.appendChild(b); });
+    box.onmouseleave = () => pick(null); });
+  sc.frame = () => { const p = pondFor(cur); p.f(); sc.cx.drawImage(bg, 0, 0); sc.cx.drawImage(p.c, ix, iy); }; });
+// 2 the fish: our fish, each a koi in its own little pond
+scene("fish", 120, 92, sc => { const W = 120, H = 92, ctx = sc.cx, img = ctx.createImageData(W, H), buf = new Uint32Array(img.data.buffer);
+  const FISH = [["SPROUT", "#8fd14f", "kohaku"], ["NIBBLE", "#ff8a3d", "orange"], ["BUBBLE", "#6fc3ff", "tancho"], ["FINN", "#f7a3c4", "sakura"], ["DRIFT", "#2a8a9a", "showa"], ["KOKO", "#ffd23f", "gold"]];
+  const R = 14, C = FISH.map((_, i) => [20 + (i % 3) * 40, 19 + (i / 3 | 0) * 44]), BG = new Uint32Array(W * H), WAT = new Uint8Array(W * H);
+  const cW = col("#2386ec"), cT0 = col("#15247a"), cT1 = col("#1d3aa6"), cE = col("#8ad8ff"), cG = col("#2aa845"), cG1 = col("#1a843e"), cO = col("#0c383c"), cSh = col("#e1e8e5");
+  BG.fill(col("#ffffff"));
+  C.forEach(([cx, cy]) => {
+    for (let y = cy + R + 2; y <= cy + R + 7; y++) for (let x = cx - R; x <= cx + R; x++) { const d = ((x - cx) / R) ** 2 + ((y - cy - R - 4) / 2.2) ** 2; if (d <= 1 && (d < .45 || ((x + y) & 1) === 0)) BG[y * W + x] = cSh; }
+    for (let y = cy - R - 3; y <= cy + R + 3; y++) for (let x = cx - R - 3; x <= cx + R + 3; x++) { const d = Math.hypot(x + .5 - cx, y + .5 - cy); if (d > R + 3) continue; const i = y * W + x;
+      if (d > R + 2) BG[i] = cO; else if (d > R) BG[i] = d > R + 1 ? cG1 : cG; else { WAT[i] = 1; BG[i] = cW; } } });
+  for (let y = 1; y < H - 1; y++) for (let x = 1; x < W - 1; x++) { const i = y * W + x; if (!WAT[i]) continue; if (!WAT[i - W]) BG[i] = cT0; else if (!WAT[i - 2 * W]) BG[i] = cT1; else if (!WAT[i + W]) BG[i] = cE; }
+  C.forEach(([cx, cy], k) => { [[-7, -3, 4], [1, -7, 3], [3, 4, 4], [-6, 7, 3]].forEach(([dx, dy, w]) => { for (let x = 0; x < w; x++) { const i = (cy + dy) * W + cx + dx + x; if (WAT[i] === 1) BG[i] = cT1; const j = (cy + dy + 1) * W + cx + dx + x + 1; if (x < w - 2 && WAT[j] === 1) BG[j] = cT1; } });
+    const px = cx + (k % 2 ? 5 : -8), py = cy + (k % 2 ? -7 : 5); [[0, 0], [1, 0], [2, 0], [-1, 1], [0, 1], [1, 1], [2, 1], [3, 1], [0, 2], [1, 2], [2, 2]].forEach(([a, b], n) => { const i = (py + b) * W + px + a; if (WAT[i]) { BG[i] = col(n < 3 ? "#62c64c" : "#2d9a3a"); WAT[i] = 2; } }); });
+  const open = i => WAT[i] === 1, oks = C.map(([cx, cy]) => (x, y) => Math.hypot(x - cx, y - cy) < R - 5);
+  const kois = FISH.map(([, , k], i) => new Koi(KOI[k], C[i][0] - 4 + i, C[i][1], i * 1.1, .26 + Math.random() * .06));
+  FISH.forEach(([t, c], i) => at(mkPill(sc.host, { t, pc: c, ink: inkFor(c), edge: darkerHex(c, .62) }), C[i][0], C[i][1] + R + 4, W, H));
+  sc.frame = tick => { buf.set(BG); kois.forEach((k, i) => { k.step(oks[i]); k.draw(buf, W, H, open, tick); }); ctx.putImageData(img, 0, 0); }; });
+// 3 the fee: each trade of $SPROUT pays 1% in MOSS and half of it burns
+scene("trade", 200, 124, sc => { const pond = mkPond({ seed: 20, roof: MOSS.pc, koi: MOSS_KOI }), bg = whiteBg(200, 124, [[ix, iy]]); at(mkPill(sc.host, EX), ix + 64, iy + 99, 200, 124);
+  const tag = mkPill(sc.host, SPROUT, "$SPROUT<small>fish</small>"); tag.classList.add("tag");
+  const ctr = document.createElement("div"); ctr.className = "ctr"; sc.host.appendChild(ctr); let burned = 24105, next = 12; const show = () => ctr.innerHTML = `EXAMPLE burned<b>${burned.toLocaleString("en-US")}</b>`; show();
+  sc.frame = tick => { pond.f(); sc.cx.drawImage(bg, 0, 0); sc.cx.drawImage(pond.c, ix, iy); const k = pond.f.kois[0], x = ix + k.x, y = iy + k.y; at(tag, x, y - 4, 200, 124);
+    if (tick >= next) { next = tick + 30; sc.chip(Math.random() < .7 ? "buy 1,000 EXAMPLE" : "sell 1,000 EXAMPLE", x, y - 14); setTimeout(() => { sc.chip("5 EXAMPLE burned", x, y - 14, "burn"); burned += 5; show(); }, 750); } }; });
+// 4 growing up: the volume fills to 2 ETH, then $SPROUT gets its own pond
+scene("grow", 300, 124, sc => { const moss = mkPond({ seed: 20, roof: MOSS.pc, koi: MOSS_KOI }), sprout = mkPond({ seed: 77, roof: SPROUT.pc, koi: ["orange"] }), A = [8, 4], B = [164, 4];
+  const bg1 = whiteBg(300, 124, [A]), bg2 = whiteBg(300, 124, [A, B]);
+  at(mkPill(sc.host, EX), A[0] + 64, A[1] + 99, 300, 124); const tag = mkPill(sc.host, SPROUT, "$SPROUT<small>fish</small>"); tag.classList.add("tag"); const own = mkPill(sc.host, SPROUT); at(own, B[0] + 64, B[1] + 99, 300, 124);
+  const prog = document.createElement("div"); prog.className = "prog"; prog.innerHTML = `$SPROUT volume <b></b><div class="bar"><div></div></div>`; sc.host.appendChild(prog); const lbl = prog.querySelector("b"), bar = prog.querySelector(".bar div");
+  let v = .2, hold = 0;
+  sc.frame = tick => { moss.f(); const done = v >= 2; sc.cx.drawImage(done ? bg2 : bg1, 0, 0); sc.cx.drawImage(moss.c, A[0], A[1]); if (done) { sprout.f(); sc.cx.drawImage(sprout.c, B[0], B[1]); }
+    const k = moss.f.kois[0]; at(tag, A[0] + k.x, A[1] + k.y - 4, 300, 124); tag.style.display = done ? "none" : ""; own.style.display = done ? "" : "none";
+    if (!done) { v = Math.min(2, v + .03); if (v >= 2) { hold = tick + 55; sc.chip("graduated · liquidity locked", B[0] + 64, B[1] + 30, "done"); } } else if (tick > hold) v = .2;
+    lbl.textContent = `${v.toFixed(2)} / 2 ETH`; bar.style.width = v / 2 * 100 + "%"; prog.style.display = done ? "none" : ""; }; });
+// 5 frenzy: the pond burns 70% of every fee while the timer runs; the water glints orange
+scene("frenzy", 200, 124, sc => { const pond = mkPond({ seed: 20, roof: MOSS.pc, koi: MOSS_KOI }), bg = whiteBg(200, 124, [[ix, iy]]); at(mkPill(sc.host, EX, "$EXAMPLE<em>frenzy</em>"), ix + 64, iy + 99, 200, 124);
+  const timer = document.createElement("div"); timer.className = "timer"; sc.host.appendChild(timer); let left = 6120; const fmt = () => timer.textContent = `${Math.floor(left / 3600)}h ${String(Math.floor(left % 3600 / 60)).padStart(2, "0")}m ${String(left % 60).padStart(2, "0")}s left`; fmt(); setInterval(() => { left = left > 0 ? left - 1 : 6120; fmt(); }, 1000);
+  const GL = [[40, 70], [52, 76], [66, 68], [78, 74], [46, 80], [60, 83], [72, 80], [36, 76]], burnC = document.createElement("div"); burnC.className = "ctr"; burnC.innerHTML = "each fee<b>70% burns EXAMPLE</b>"; sc.host.appendChild(burnC);
+  sc.frame = tick => { pond.f(); sc.cx.drawImage(bg, 0, 0); sc.cx.drawImage(pond.c, ix, iy);
+    GL.forEach(([x, y], i) => { if ((tick + i * 5) % 16 > 8) return; sc.cx.fillStyle = i % 2 ? "#ffb13a" : "#ff5a3a"; sc.cx.fillRect(ix + x, iy + y, 2, 1); sc.cx.fillRect(ix + x + 1, iy + y - 1, 1, 1); }); }; });
+// 6 $PONDS burns itself too: $PONDS coins thrown into a campfire
+scene("fire", 140, 96, sc => { const W = 200, H = 124, ctx = sc.cx, OX = -30, OY = -26; // drawn in a 200x124 world, framed tight on the fire
+  const base = sprite(W, H, b => { b.fill(col("#ffffff")); const SH = col("#e1e8e5");
+    for (let y = 104; y <= 117; y++) for (let x = 58; x <= 142; x++) { const d = ((x - 100) / 42) ** 2 + ((y - 111) / 6) ** 2; if (d <= 1 && (d < .45 || ((x + y) & 1) === 0)) b[y * W + x] = SH; }
+    [[70, 104], [79, 109], [91, 111], [105, 111], [117, 109], [127, 104], [75, 98], [124, 98]].forEach(([x, y]) => paintBlob(b, W, H, [[x, y, 3.4], [x + 2.6, y + .6, 2.5]], STONE));
+    const log = (x0, y0, x1, y1) => { const len = Math.hypot(x1 - x0, y1 - y0); for (let t = 0; t <= len; t += .5) { const x = Math.round(x0 + (x1 - x0) * t / len), y = y0 + (y1 - y0) * t / len;
+        for (let k = -2; k <= 2; k++) { const Y = Math.round(y + k); if (x >= 0 && Y >= 0 && x < W && Y < H) b[Y * W + x] = col(k === -2 || k === 2 ? "#2e1a0e" : k === -1 ? "#9a6436" : "#6a3e1e"); } }
+      [[x0, y0], [x1, y1]].forEach(([x, y]) => { for (let k = -1; k <= 1; k++) b[Math.round(y + k) * W + Math.round(x)] = col(k === 0 ? "#e0b078" : "#c89058"); }); };
+    log(80, 106, 120, 95); log(80, 95, 120, 106); });
+  const FC = ["#8a1f10", "#ff5a3a", "#ff9a2e", "#ffd23f", "#fff3b0"]; let flame = [], flare = 0;
+  const makeFlame = tick => { const m = new Map(), T = [[-9, 19, 6], [0, 30, 8], [9, 21, 6], [-4, 13, 5], [5, 15, 5]];
+    T.forEach(([dx, h0, w0], k) => { const h = h0 + Math.round(3 * Math.sin(tick * .9 + k * 1.7)) + (flare > 0 ? 9 : 0), cx0 = 100 + dx;
+      for (let j = 0; j < h; j++) { const t = j / h, sway = Math.sin(t * 3 + tick * .6 + k) * 1.5 * t, w = w0 * Math.pow(1 - t, .7) * Math.min(1, .55 + t * 3), y = 99 - j;
+        for (let x = Math.floor(cx0 + sway - w); x <= Math.ceil(cx0 + sway + w); x++) { const u = Math.abs(x + .5 - cx0 - sway) / Math.max(w, .5); if (u > 1) continue; const heat = (1 - u) * (1 - t * .8), key = y * W + x; if (heat > (m.get(key) || 0)) m.set(key, heat); } } });
+    flame = []; m.forEach((heat, key) => { const edge = [1, -1, W, -W].some(o => !m.has(key + o)); flame.push([key % W, key / W | 0, edge ? FC[0] : heat > .62 ? FC[4] : heat > .42 ? FC[3] : heat > .22 ? FC[2] : FC[1]]); }); };
+  const EMB = [...Array(7)].map((_, i) => ({ x: 96 + i * 1.5, y: 72, life: i * 3 }));
+  const COIN = [["..OOOOO..", ".OyyyyyO.", "OyhYYYYyO", "OyYmmYYyO", "OyYmYmYyO", "OyYmmYYyO", "OyYmYYYyO", ".OyyyyyO.", "..OOOOO.."],
+                ["...OOO...", "..OyyyO..", "..OhYYO..", "..OymYO..", "..OymYO..", "..OymYO..", "..OyYYO..", "..OyyyO..", "...OOO..."],
+                ["....O....", "...OyO...", "...OyO...", "...OyO...", "...OyO...", "...OyO...", "...OyO...", "...OyO...", "....O...."]];
+  const CM2 = { O: "#8a5a10", y: "#e0a82a", Y: "#ffd23f", m: "#b8860b", h: "#fff3b0" }, COINS = COIN.map(g => sprite(9, 9, (b, w, h) => gridPaint(b, w, h, g, 0, 0, CM2))), SPIN = [0, 1, 2, 1];
+  const ctr = document.createElement("div"); ctr.className = "ctr"; sc.host.appendChild(ctr); let burned = 1204332, next = 8, flying = [];
+  const show = () => ctr.innerHTML = `$PONDS burned<b>${burned.toLocaleString("en-US")}</b>`; show();
+  sc.frame = tick => { ctx.setTransform(1, 0, 0, 1, OX, OY); ctx.drawImage(base, 0, 0);
+    if (tick % 2 === 0 || !flame.length) { makeFlame(tick); if (flare > 0) flare--; }
+    flame.forEach(([x, y, c]) => { ctx.fillStyle = c; ctx.fillRect(x, y, 1, 1); });
+    EMB.forEach(e => { e.life++; if (e.life > 22) { e.x = 92 + Math.random() * 16; e.y = 74 - (flare ? 8 : 0); e.life = 0; } e.y -= .9; e.x += Math.sin(e.life * .5) * .4; if (e.life < 18) { ctx.fillStyle = e.life % 4 < 2 ? "#ffd23f" : "#ff9a2e"; ctx.fillRect(Math.round(e.x), Math.round(e.y), 1, 1); } });
+    if (tick >= next) { next = tick + 22 + (Math.random() * 10 | 0); const left = Math.random() < .5; flying.push({ x0: left ? 24 : 176, y0: 38 + Math.random() * 22, x1: 96 + Math.random() * 8, y1: 86, u: 0, n: 500 + (Math.random() * 4500 | 0) }); }
+    flying = flying.filter(c => { c.u += 1 / 16; if (c.u >= 1) { flare = 5; burned += c.n; show(); sc.chip(`+${c.n.toLocaleString("en-US")} $PONDS burned`, 100 + OX, 58 + OY, "burn"); return false; }
+      const x = c.x0 + (c.x1 - c.x0) * c.u, y = c.y0 + (c.y1 - c.y0) * c.u - 34 * Math.sin(Math.PI * c.u); ctx.drawImage(COINS[SPIN[((tick >> 1) + c.n) % 4]], Math.round(x) - 4, Math.round(y) - 4); return true; }); ctx.setTransform(1, 0, 0, 1, 0, 0); }; });
+
+// ---------- the fee pies: a chunky 3D pixel donut per split, it sweeps in when seen; hovering a row lights its slice ----------
+const SL = { burn: { top: "#ff5a3a", lite: "#ff8d63", side: "#c7391f", sw: "#ff5a3a" }, cr: { top: "#ffd23f", lite: "#ffe58a", side: "#d6a21c", sw: "#ffd23f" }, tr: { top: "#6fc3ff", lite: "#a9dcff", side: "#3b8fd1", sw: "#6fc3ff" } };
+const PIE_DATA = {
+  fish:   { title: "The 10 EXAMPLE fee", rows: [["burn", 50, "burned forever", "5 EXAMPLE"], ["cr", 30, "to the $SPROUT creator", "3 EXAMPLE"], ["tr", 20, "to the Ponds treasury", "2 EXAMPLE"]] },
+  frenzy: { title: "The same 10 EXAMPLE fee, in a frenzy", rows: [["burn", 70, "burned forever", "7 EXAMPLE"], ["cr", 30, "to the $SPROUT creator", "3 EXAMPLE"]] },
+};
+function drawPie(cv, rows, prog, hi){
+  const W = cv.width, H = cv.height, x = cv.getContext("2d"), img = x.createImageData(W, H), b = new Uint32Array(img.data.buffer);
+  const cx = W / 2, cy = 26, rx = 34, ry = 24, t = 8, hx = 13, hy = 9, TAU = Math.PI * 2, OUT = col("#0c2a33"), GAP = col("#ffffff");
+  const cum = []; let acc = 0; rows.forEach(r => { cum.push([acc, acc + r[1] / 100]); acc += r[1] / 100; });
+  const at = f => { if (f > prog) return -1; for (let i = 0; i < cum.length; i++) if (f >= cum[i][0] && f < cum[i][1]) return i; return -1; };
+  const frac = (px, py) => ((Math.atan2((py - cy) / ry, (px - cx) / rx) + Math.PI / 2 + TAU) % TAU) / TAU;
+  const inE = (px, py, ccy, a, bb) => ((px - cx) / a) ** 2 + ((py - ccy) / bb) ** 2 <= 1;
+  for (let y = 0; y < H; y++) for (let X = 0; X < W; X++) { const px = X + .5, py = y + .5; let c = 0;
+    const top = inE(px, py, cy, rx, ry), hole = inE(px, py, cy, hx, hy);
+    if (top && !hole) { const f = frac(px, py), i = at(f); if (i >= 0) { const k = SL[rows[i][0]], rr = Math.hypot(px - cx, (py - cy) * rx / ry);
+        const gap = rows.length > 1 && cum.some(([a0]) => { let d = Math.abs(f - a0); d = Math.min(d, 1 - d); return d * TAU * rr < .75; });
+        const lit = i === hi || (px - cx) / rx + (py - cy) / ry < -.6; c = gap ? GAP : col(lit ? k.lite : k.top); } }
+    else if (!top) { for (let d = 1; d <= t; d++) if (inE(px, py - d, cy, rx, ry)) { const i = at(frac(px, py - d)); if (i >= 0) { const sd = col(SL[rows[i][0]].side); c = d === 1 ? shade(sd, .78) : sd; } break; } }
+    else if (!inE(px, py, cy + t, hx, hy)) { const i = at(frac(px, py)); if (i >= 0) c = shade(col(SL[rows[i][0]].side), .72); }
+    b[y * W + X] = c; }
+  const S2 = b.slice(); for (let y = 0; y < H; y++) for (let X = 0; X < W; X++) { const i = y * W + X; if (!S2[i] || S2[i] === GAP) continue;
+    if ([[1, 0], [-1, 0], [0, 1], [0, -1]].some(([a, bb]) => { const X2 = X + a, Y2 = y + bb; return X2 < 0 || Y2 < 0 || X2 >= W || Y2 >= H || !S2[Y2 * W + X2]; })) b[i] = OUT; }
+  const SH = col("#e1e8e5"); for (let y = 56; y < H; y++) for (let X = 0; X < W; X++) { const i = y * W + X; if (b[i]) continue; const d = ((X - cx) / 30) ** 2 + ((y - 59) / 3.5) ** 2; if (d <= 1 && (d < .45 || ((X + y) & 1) === 0)) b[i] = SH; }
+  x.putImageData(img, 0, 0);
+}
+const PIES = [...document.querySelectorAll("[data-pie]")].map(host => { const D = PIE_DATA[host.dataset.pie], cv = document.createElement("canvas"); cv.width = 76; cv.height = 64; host.appendChild(cv);
+  const leg = document.createElement("div"); leg.className = "pie-leg"; leg.innerHTML = `<div class="t">${D.title}</div>` + D.rows.map(([k, v, label, amt]) => `<div class="r"><i style="background:${SL[k].sw}"></i><em>${v}%</em><span>${label}</span><b>${amt}</b></div>`).join(""); host.appendChild(leg);
+  const pie = { cv, rows: D.rows, prog: 0, hi: -1, seen: false, dirty: true };
+  leg.querySelectorAll(".r").forEach((r, i) => { r.onmouseenter = () => { pie.hi = i; pie.dirty = true; }; r.onmouseleave = () => { pie.hi = -1; pie.dirty = true; }; });
+  new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) pie.seen = true; }), { threshold: .4 }).observe(host); drawPie(cv, D.rows, 0, -1); return pie; });
+
+// ---------- the loop ----------
+let tick = 0, last = 0;
+(function loop(t){ requestAnimationFrame(loop); if (t - last < 90 || !VW) return; last = t; tick++;
+  if (glide) { cam.x += (glide.x - cam.x) * .2; cam.y += (glide.y - cam.y) * .2; clampCam(); if (Math.hypot(glide.x - cam.x, glide.y - cam.y) < .5) glide = null; }
+  P.forEach(p => { p.wx += (p.tx - p.wx) * .09; p.wy += (p.ty - p.wy) * .09; });
+  const Wd = WORLDS[world], ox = VW / 2 - cam.x, oy = VH / 2 - cam.y, vis = [], floating = Wd.mode === "island";
+  const art = p => Wd.mode === "patch" ? (p.pa || (p.pa = p.build("patch"))) : Wd.mode === "field" ? (p.fa || (p.fa = p.build("field"))) : p;
+  P.forEach(p => { const x = Math.round(p.wx + ox) - 64, y = Math.round(p.wy + oy) - 60; const on = x > -130 && x < VW + 2 && y > -106 && y < VH + 2;
+    p.pill.style.display = on ? "" : "none"; if (!on) return; vis.push({ p, x, y: y + (floating ? ((tick + P.indexOf(p) * 9) >> 4) & 1 : 0) });
+    p.pill.style.left = (x + 64) * Z + "px"; p.pill.style.top = (y + Wd.pill) * Z + "px"; });
+  Wd.W.under(ox, oy, tick, vis);
+  vis.forEach(o => art(o.p).frame());
+  const draw = vis.map(o => ({ base: o.y + 86, f: () => mx.drawImage(art(o.p).canvas, o.x, o.y) }));
+  Wd.W.decor.forEach(d => { const x = Math.round(d.x + ox) - (d.spr.width >> 1), y = Math.round(d.y + oy) - d.spr.height; if (x > -40 && x < VW + 4 && y > -44 && y < VH + 4) draw.push({ base: y + d.spr.height, f: () => mx.drawImage(d.spr, x, y) }); });
+  draw.sort((a, b) => a.base - b.base).forEach(d => d.f());
+  Wd.W.over(tick);
+  SCENES.forEach(sc => sc.visible && sc.frame(tick));
+  PIES.forEach(p => { if (p.seen && p.prog < 1) { p.prog = Math.min(1, p.prog + .07); p.dirty = true; } if (p.dirty) { drawPie(p.cv, p.rows, p.prog, p.hi); p.dirty = false; } });
+  if (open) { card.style.left = (Math.round(open.wx + ox)) * Z + "px"; card.style.top = (Math.round(open.wy + oy) - 42) * Z + "px"; }
+})(0);
+});
+</script>
+</body>
+</html>
