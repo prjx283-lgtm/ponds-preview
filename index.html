@@ -531,7 +531,7 @@ scene("pond", SW, 124, sc => { const bg = whiteBg(SW, 124, [[ix, iy]]), cache = 
     if (c) { pill = mkPill(sc.host, { t: c.t, pc: c.color, ink: inkFor(c.color), edge: darkerHex(c.color, .62) }); at(pill, ix + 64, iy + 99, SW, 124); }
     document.querySelectorAll(".coin").forEach(b => b.classList.toggle("on", !!c && b.dataset.t === c.t)); };
   const fmt = n => n >= 1e9 ? "$" + (n / 1e9).toFixed(1) + "B" : n >= 1e6 ? "$" + Math.round(n / 1e6) + "M" : "$" + Math.round(n / 1e3) + "K";
-  fetch("pons-top.json").then(r => r.json()).then(d => { const box = document.getElementById("coins");
+  fetch("pons-top.json?v=2").then(r => r.json()).then(d => { const box = document.getElementById("coins");
     d.coins.forEach(c => { const b = document.createElement("button"); b.className = "coin"; b.dataset.t = c.t;
       const logo = c.logo ? `<img src="${c.logo}" alt="" loading="lazy" referrerpolicy="no-referrer">` : `<span class="lg" style="background:${c.color};color:${inkFor(c.color)}">${c.t[0]}</span>`;
       b.innerHTML = `${logo}<span class="id"><span class="pill" style="background:${c.color};color:${inkFor(c.color)};box-shadow:0 2px 0 ${darkerHex(c.color, .62)}">$${c.t}</span><span class="nm">${c.name}</span></span><span class="mc">${fmt(c.mcap)}</span>`;
