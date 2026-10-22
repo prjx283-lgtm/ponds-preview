@@ -13,7 +13,10 @@ const KOI = {
   showa:  { body: [BK, RD, WH, BK, RD, WH, BK, WH, BK, WH, BK], fin: "#3a3a48" },
   orange: { body: ["#ffb060", "#ffa048", "#ff9438", "#ff8c30", "#ff862a", "#ff8026", "#ff7a22", "#ff761e", "#ff721c", "#ff6e1a", "#ff6a18"], fin: "#ffc890" },
 };
+// a golden koi: bright gold scales, a pale fin
+const GOLD_BODY = ["#fff6c8", "#ffe680", "#ffd84a", "#ffd23f", "#ffcc2e", "#ffc21f", "#ffcc2e", "#ffd23f", "#ffd84a", "#ffe680", "#fff0a8"];
 class Koi {
+  setGold(on){ if (on && !this.gold) { this.base = [this.c, this.fin]; this.c = GOLD_BODY.map(col); this.fin = col("#fff3b0"); } else if (!on && this.gold) { [this.c, this.fin] = this.base; } this.gold = on; }
   constructor(spec, x, y, a, v){ this.c = spec.body.map(col); this.fin = col(spec.fin); this.x = x; this.y = y; this.a = a; this.v = v; this.turn = 0; this.ph = Math.random() * 10; this.trail = []; for (let j = 0; j < 30; j++) this.trail.push([x - Math.cos(a) * j * .5, y - Math.sin(a) * j * .5]); }
   step(ok){
     const L = 6, px = this.x + Math.cos(this.a) * L, py = this.y + Math.sin(this.a) * L;
@@ -34,6 +37,8 @@ class Koi {
     [ba + 1.15 + fl, ba - 1.15 - fl].forEach(a => { for (let j = 2.2; j <= 3.4; j += .6) fins.push([Math.floor(fx + Math.cos(a) * j), Math.floor(fy + Math.sin(a) * j)]); });
     fins.forEach(([X, Y]) => { if (X < 0 || Y < 0 || X >= W || Y >= H) return; const i = Y * W + X; if (open(i) && !body.has(i)) buf[i] = this.fin; });
     body.forEach(({ s }, i) => { if (!open(i)) return; const c = this.c[s], edge = !body.has(i + 1) || !body.has(i + W); buf[i] = edge ? shade(c, .86) : c; });
+    // a golden koi twinkles: two white sparkles around its head, on and off
+    if (this.gold && ((tick >> 2) & 1)) { const [sx2, sy2] = pts[1], W8 = col("#ffffff"); [[-3, -3], [3, -2], [-2, 3]].forEach(([a, b], n) => { if (((tick >> 3) + n) % 3 === 0) return; const X = Math.floor(sx2 + a), Y = Math.floor(sy2 + b); if (X < 0 || Y < 0 || X >= W || Y >= H) return; const i = Y * W + X; if (open(i)) buf[i] = W8; }); }
   }
 }
 

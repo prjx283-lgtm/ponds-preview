@@ -66,6 +66,7 @@ button{font:inherit;cursor:pointer}
 .card .row .btn{flex:1;text-align:center;box-shadow:none;padding:10px 8px 9px;font-size:11px;border:2px solid var(--ink)}
 .toast{position:absolute;left:50%;bottom:26px;transform:translate(-50%,20px);font:700 11px Unbounded,sans-serif;color:#fff;background:var(--ink);border-radius:999px;padding:9px 16px 8px;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;white-space:nowrap}
 .toast.on{opacity:1;transform:translate(-50%,0)}
+.toast.tap{pointer-events:auto;cursor:pointer;background:#ffd23f;color:#3a2a00}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid #1f262e}
 .stats div{padding:22px 24px;border-right:1px solid #1f262e;font-size:12px;color:#8b98a5}
 .stats div:last-child{border-right:0}
@@ -156,9 +157,9 @@ button{font:inherit;cursor:pointer}
 .lprev .say{font-size:12px;line-height:1.6;color:#3c5560;margin-top:12px;padding-top:12px;border-top:1px solid #edf1ef}
 @media (max-width:860px){.lgrid{grid-template-columns:1fr}.lprev{position:static;order:-1}.frow{grid-template-columns:1fr}.launch-head h2{font-size:32px}}
 /* the fee pies */
-.pie-row{display:flex;align-items:center;gap:22px;margin-top:14px}
+.pie-row{display:flex;flex-wrap:wrap;align-items:center;gap:18px 22px;margin-top:14px}
 .pie-row canvas{width:176px;flex:none;image-rendering:pixelated}
-.pie-leg{flex:1;display:grid;gap:10px}
+.pie-leg{flex:1 1 240px;min-width:0;display:grid;gap:10px}
 .pie-leg .t{font:700 11px Unbounded,sans-serif;color:#7b8f97;letter-spacing:.04em}
 .pie-leg .r{display:grid;grid-template-columns:14px 64px 1fr auto;align-items:center;gap:10px;padding:6px 8px;margin:0 -8px;border-radius:10px;cursor:default;transition:background .15s}
 .pie-leg .r:hover{background:#e8efec}
@@ -168,6 +169,8 @@ button{font:inherit;cursor:pointer}
 .pie-leg .r b{font:700 12px Unbounded,sans-serif;white-space:nowrap}
 .ctr{position:absolute;left:10px;top:10px;font:500 11px "JetBrains Mono",monospace;color:#0c2a33;background:#f1f5f3;border-radius:999px;padding:6px 12px}
 .ctr b{font:700 11px Unbounded,sans-serif;margin-left:4px}
+.timer.gold{background:#ffd23f;color:#3a2a00}
+.pill em.gold{background:#ffd23f;color:#3a2a00}
 .timer{position:absolute;right:10px;top:10px;font:700 11px Unbounded,sans-serif;color:#fff;background:#ff5a3a;border-radius:999px;padding:6px 12px 5px}
 .prog{position:absolute;left:56%;right:12px;top:46%;transform:translateY(-50%);background:#f1f5f3;border-radius:14px;padding:10px 13px;font:500 11px "JetBrains Mono",monospace;color:#0c2a33}
 .prog b{font:700 11px Unbounded,sans-serif}
@@ -202,7 +205,7 @@ button{font:inherit;cursor:pointer}
 </div>
 <div class="stats" id="stats"></div>
 <div class="how-wrap"><section class="how" id="how">
-  <div class="how-head"><h2>How it works</h2><p>Six steps, each with an example. In most of them $EXAMPLE is a pond and $SPROUT is a fish living in it.</p></div>
+  <div class="how-head"><h2>How it works</h2><p>Seven steps, each with an example. In most of them $EXAMPLE is a pond and $SPROUT is a fish living in it.</p></div>
   <article class="step"><div class="art" data-scene="pond"></div><div class="txt">
     <span class="num">1 · The pond</span><h3>Any coin can be a pond.</h3>
     <p>A pond is a coin that already trades on Robinhood Chain, with at least 1 ETH of liquidity. Anyone can register it, once. The pond takes the colour of the coin's logo.</p>
@@ -216,17 +219,22 @@ button{font:inherit;cursor:pointer}
     <p>Every buy or sell of a fish pays 1%, in the pond's coin. Half of it is burned forever, so the busier the fish, the smaller the pond's supply.</p>
     <div class="eg"><b>Example</b>Someone buys 1,000 EXAMPLE of $SPROUT. The fee is 10 EXAMPLE.
       <div class="pie-row" data-pie="fish"></div></div></div></article>
+  <article class="step"><div class="art" data-scene="golden"></div><div class="txt">
+    <span class="num">4 · Golden koi</span><h3>A golden koi can appear anytime.</h3>
+    <p>A few times a day, one fish turns gold for 10 minutes. While it is gold, its trades burn 60% of the pond's coin instead of 50%. Nobody knows when or where it lands, not even us. Ponds that get fed every day earn extra golden koi.</p>
+    <div class="eg"><b>Example</b>$SPROUT turns gold. Someone buys 1,000 EXAMPLE of it. The fee is still 10 EXAMPLE, but 6 burn instead of 5.
+      <div class="pie-row" data-pie="golden"></div></div></div></article>
   <article class="step"><div class="art" data-scene="grow"></div><div class="txt">
-    <span class="num">4 · Growing up</span><h3>At 2 ETH of volume, a fish leaves the curve.</h3>
+    <span class="num">5 · Growing up</span><h3>At 2 ETH of volume, a fish leaves the curve.</h3>
     <p>When a fish reaches 2 ETH of trading volume, it graduates. It moves to a Uniswap pool with 100% of its liquidity locked forever, and its trades keep feeding the pond. It can then become a pond itself, up to 3 deep.</p>
     <div class="eg"><b>Example</b>$SPROUT has traded 2 ETH in total. Its liquidity is locked for good, and $SPROUT can now be a pond with fish of its own.</div></div></article>
   <article class="step"><div class="art" data-scene="frenzy"></div><div class="txt">
-    <span class="num">5 · Frenzy</span><h3>Burn $PONDS, start a frenzy.</h3>
-    <p>Anyone can burn $PONDS on any pond to start a frenzy. While it lasts, 70% of that pond's fees burn it instead of 50%, and the pond sits right next to the middle of the map.</p>
+    <span class="num">6 · Frenzy</span><h3>Burn $PONDS, start a frenzy.</h3>
+    <p>Anyone can burn $PONDS on any pond to start a frenzy. While it lasts, 60% of that pond's fees burn it instead of 50%, and the pond sits right next to the middle of the map.</p>
     <div class="eg"><b>Example</b>$EXAMPLE pays the treasury about 0.004 ETH every 10 minutes. 10 minutes of frenzy costs 1.5 times that, so 0.006 ETH of $PONDS, burned. One hour costs 0.036 ETH. You can stack up to 24 hours.
       <div class="pie-row" data-pie="frenzy"></div></div></div></article>
   <article class="step"><div class="art" data-scene="fire"></div><div class="txt">
-    <span class="num">6 · $PONDS</span><h3>$PONDS burns itself too.</h3>
+    <span class="num">7 · $PONDS</span><h3>$PONDS burns itself too.</h3>
     <p>Every frenzy burns $PONDS. $PONDS is a pond as well, so every trade of a fish living in it burns $PONDS. And a steady buy and burn runs on its own, all the time. Nobody has to remember, nobody has to be trusted.</p></div></article>
 </section></div>
 <div class="launch-wrap"><section class="launch" id="launch">
@@ -253,7 +261,7 @@ button{font:inherit;cursor:pointer}
   </div>
 </section></div>
 
-<script src="pond-island.js?v=6"></script>
+<script src="pond-island.js?v=7"></script>
 <script src="demo-ponds.js?v=3"></script>
 <script>
 document.fonts.ready.then(() => {
@@ -282,7 +290,8 @@ function layout(first){
   P.forEach(p => { if (p.pill) p.pill.innerHTML = pillHTML(p); });
 }
 const CALM = matchMedia("(prefers-reduced-motion: reduce)").matches;
-const pillHTML = p => `<i>${p.rank}</i>$${p.t}` + (p.frenzy ? "<em>frenzy</em>" : "");
+const goldLabel = p => { const s = Math.max(0, Math.round((p.goldUntil - Date.now()) / 1000 * 30)); return `golden ${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`; };
+const pillHTML = p => `<i>${p.rank}</i>$${p.t}` + (p.goldUntil > Date.now() ? `<em class="gold">${goldLabel(p)}</em>` : p.frenzy ? "<em>frenzy</em>" : "");
 P.forEach(p => { const b = document.createElement("button"); b.className = "pill"; b.style.background = p.pc; b.style.color = p.ink; b.style.boxShadow = `0 2px 0 ${p.edge}`; b.onclick = () => fly(p); pillBox.appendChild(b); p.pill = b; p.logoURL = p.logoCanvas.toDataURL(); });
 layout(true);
 
@@ -486,10 +495,17 @@ function fly(p){ glide = { x: p.tx, y: p.ty - 34 / Z * 2 }; open = p;
   card.querySelector(".x").onclick = closeCard; card.hidden = false; }
 function closeCard(){ open = null; card.hidden = true; }
 const toast = document.getElementById("toast"); let toastT = 0;
+// golden koi on the map (demo pace: one every ~18 s, gold for 20 s, the pill counts down 10 minutes 30x fast)
+let goldNow = null;
+toast.addEventListener("click", () => { if (goldNow) fly(goldNow.p); });
+setInterval(() => { if (goldNow) return; const seen = P.filter(p => p.landed && p.frame.kois.length && p.pill.style.display !== "none"), cand = seen.length ? seen : P.filter(p => p.landed && p.frame.kois.length); const p = cand[Math.random() * cand.length | 0]; if (!p) return;
+  const k = p.frame.kois[Math.random() * p.frame.kois.length | 0]; k.setGold(true); p.goldUntil = Date.now() + 20000; goldNow = { p, k };
+  toast.textContent = `A golden koi appeared in $${p.t}: its fish burns 60% for 10 minutes. Tap to see it`; toast.classList.add("on", "tap"); clearTimeout(toastT); toastT = setTimeout(() => toast.classList.remove("on", "tap"), 5000); }, 18000);
+setInterval(() => { if (!goldNow) return; const { p, k } = goldNow; if (Date.now() >= p.goldUntil) { k.setGold(false); p.goldUntil = 0; goldNow = null; } p.pill.innerHTML = pillHTML(p); }, 500);
 setInterval(() => { const cand = P.filter(p => !p.ours && !p.frenzy && p.slot >= 8); if (!cand.length) return; const p = cand[Math.random() * cand.length | 0];
   const order = P.filter(o => !o.ours && !o.frenzy).sort(byPct), beat = order[Math.max(0, order.indexOf(p) - 3 - (Math.random() * 4 | 0))];
   p.pct = +(beat.pct + .01).toFixed(2); layout(false);
-  toast.textContent = `$${p.t} burned more and moved closer to the middle`; toast.classList.add("on"); clearTimeout(toastT); toastT = setTimeout(() => toast.classList.remove("on"), 3200); }, 7000);
+  if (!goldNow) { toast.textContent = `$${p.t} burned more and moved closer to the middle`; toast.classList.add("on"); clearTimeout(toastT); toastT = setTimeout(() => toast.classList.remove("on"), 3200); } }, 7000);
 
 // ---------- stats under the map ----------
 document.getElementById("stats").innerHTML = `<div>Ponds<b>${P.length}</b></div><div>Fish swimming<b>${P.reduce((s, p) => s + p.fish, 0)}</b></div><div>Burned in all ponds<b>$2.41M</b></div><div>$PONDS burned<b>4.1%</b></div>`;
@@ -545,7 +561,15 @@ scene("trade", SW, 124, sc => { const pond = mkPond({ seed: 20, roof: MOSS.pc, k
   const ctr = document.createElement("div"); ctr.className = "ctr"; sc.host.appendChild(ctr); let burned = 24105, next = 12; const show = () => ctr.innerHTML = `EXAMPLE burned<b>${burned.toLocaleString("en-US")}</b>`; show();
   sc.frame = tick => { pond.f(); sc.cx.drawImage(bg, 0, 0); sc.cx.drawImage(pond.c, ix, iy); const k = pond.f.kois[0], x = ix + k.x, y = iy + k.y; at(tag, x, y - 4, SW, 124);
     if (tick >= next) { next = tick + 30; sc.chip(Math.random() < .7 ? "buy 1,000 EXAMPLE" : "sell 1,000 EXAMPLE", x, y - 14); setTimeout(() => { sc.chip("5 EXAMPLE burned", x, y - 14, "burn"); burned += 5; show(); }, 750); } }; });
-// 4 growing up: the volume fills to 2 ETH, then $SPROUT gets its own pond
+// 4 golden koi: one koi turns gold for 10 minutes and its trades burn 60%
+scene("golden", SW, 124, sc => { const pond = mkPond({ seed: 20, roof: MOSS.pc, koi: MOSS_KOI }), bg = whiteBg(SW, 124, [[ix, iy]]); at(mkPill(sc.host, EX), ix + 64, iy + 99, SW, 124);
+  pond.f.kois[0].setGold(true);
+  const tag = mkPill(sc.host, { t: "SPROUT", pc: "#ffd23f", ink: "#3a2a00", edge: "#b8860b" }, "$SPROUT<small>golden</small>"); tag.classList.add("tag");
+  const timer = document.createElement("div"); timer.className = "timer gold"; sc.host.appendChild(timer); let left = 599; const fmt = () => timer.textContent = `golden for ${Math.floor(left / 60)}:${String(left % 60).padStart(2, "0")}`; fmt(); setInterval(() => { left = left > 0 ? left - 1 : 599; fmt(); }, 1000);
+  const ctr = document.createElement("div"); ctr.className = "ctr"; sc.host.appendChild(ctr); let burned = 31480, next = 10; const show = () => ctr.innerHTML = `EXAMPLE burned<b>${burned.toLocaleString("en-US")}</b>`; show();
+  sc.frame = tick => { pond.f(); sc.cx.drawImage(bg, 0, 0); sc.cx.drawImage(pond.c, ix, iy); const k = pond.f.kois[0], x = ix + k.x, y = iy + k.y; at(tag, x, y - 4, SW, 124);
+    if (tick >= next) { next = tick + 26; sc.chip("buy 1,000 EXAMPLE", x, y - 14); setTimeout(() => { sc.chip("6 EXAMPLE burned", x, y - 14, "burn"); burned += 6; show(); }, 750); } }; });
+// 5 growing up: the volume fills to 2 ETH, then $SPROUT gets its own pond
 scene("grow", 300, 124, sc => { const moss = mkPond({ seed: 20, roof: MOSS.pc, koi: MOSS_KOI }), sprout = mkPond({ seed: 77, roof: SPROUT.pc, koi: ["orange"] }), A = [8, 4], B = [164, 4];
   const bg1 = whiteBg(300, 124, [A]), bg2 = whiteBg(300, 124, [A, B]);
   at(mkPill(sc.host, EX), A[0] + 64, A[1] + 99, 300, 124); const tag = mkPill(sc.host, SPROUT, "$SPROUT<small>fish</small>"); tag.classList.add("tag"); const own = mkPill(sc.host, SPROUT); at(own, B[0] + 64, B[1] + 99, 300, 124);
@@ -555,10 +579,10 @@ scene("grow", 300, 124, sc => { const moss = mkPond({ seed: 20, roof: MOSS.pc, k
     const k = moss.f.kois[0]; at(tag, A[0] + k.x, A[1] + k.y - 4, 300, 124); tag.style.display = done ? "none" : ""; own.style.display = done ? "" : "none";
     if (!done) { v = Math.min(2, v + .03); if (v >= 2) { hold = tick + 55; sc.chip("graduated · liquidity locked", B[0] + 64, B[1] + 30, "done"); } } else if (tick > hold) v = .2;
     lbl.textContent = `${v.toFixed(2)} / 2 ETH`; bar.style.width = v / 2 * 100 + "%"; prog.style.display = done ? "none" : ""; }; });
-// 5 frenzy: the pond burns 70% of every fee while the timer runs; the water glints orange
+// 6 frenzy: the pond burns 60% of every fee while the timer runs; the water glints orange
 scene("frenzy", SW, 124, sc => { const pond = mkPond({ seed: 20, roof: MOSS.pc, koi: MOSS_KOI }), bg = whiteBg(SW, 124, [[ix, iy]]); at(mkPill(sc.host, EX, "$EXAMPLE<em>frenzy</em>"), ix + 64, iy + 99, SW, 124);
   const timer = document.createElement("div"); timer.className = "timer"; sc.host.appendChild(timer); let left = 6120; const fmt = () => timer.textContent = `${Math.floor(left / 3600)}h ${String(Math.floor(left % 3600 / 60)).padStart(2, "0")}m ${String(left % 60).padStart(2, "0")}s left`; fmt(); setInterval(() => { left = left > 0 ? left - 1 : 6120; fmt(); }, 1000);
-  const GL = [[40, 70], [52, 76], [66, 68], [78, 74], [46, 80], [60, 83], [72, 80], [36, 76]], burnC = document.createElement("div"); burnC.className = "ctr"; burnC.innerHTML = "each fee<b>70% burns EXAMPLE</b>"; sc.host.appendChild(burnC);
+  const GL = [[40, 70], [52, 76], [66, 68], [78, 74], [46, 80], [60, 83], [72, 80], [36, 76]], burnC = document.createElement("div"); burnC.className = "ctr"; burnC.innerHTML = "each fee<b>60% burns EXAMPLE</b>"; sc.host.appendChild(burnC);
   sc.frame = tick => { pond.f(); sc.cx.drawImage(bg, 0, 0); sc.cx.drawImage(pond.c, ix, iy);
     GL.forEach(([x, y], i) => { if ((tick + i * 5) % 16 > 8) return; sc.cx.fillStyle = i % 2 ? "#ffb13a" : "#ff5a3a"; sc.cx.fillRect(ix + x, iy + y, 2, 1); sc.cx.fillRect(ix + x + 1, iy + y - 1, 1, 1); }); }; });
 // 6 $PONDS burns itself too: $PONDS coins thrown into a campfire
@@ -640,10 +664,11 @@ renderPonds(); refresh(true);
 document.querySelectorAll(".intro .btn").forEach((b, i) => b.onclick = () => { document.getElementById("launch").scrollIntoView({ behavior: "smooth" }); if (i === 1) { document.getElementById("reg").hidden = false; } });
 
 // ---------- the fee pies: a chunky 3D pixel donut per split, it sweeps in when seen; hovering a row lights its slice ----------
-const SL = { burn: { top: "#ff5a3a", lite: "#ff8d63", side: "#c7391f", sw: "#ff5a3a" }, cr: { top: "#ffd23f", lite: "#ffe58a", side: "#d6a21c", sw: "#ffd23f" }, tr: { top: "#6fc3ff", lite: "#a9dcff", side: "#3b8fd1", sw: "#6fc3ff" } };
+const SL = { hd: { top: "#8fd14f", lite: "#b9ea86", side: "#5e9a2c", sw: "#8fd14f" }, burn: { top: "#ff5a3a", lite: "#ff8d63", side: "#c7391f", sw: "#ff5a3a" }, cr: { top: "#ffd23f", lite: "#ffe58a", side: "#d6a21c", sw: "#ffd23f" }, tr: { top: "#6fc3ff", lite: "#a9dcff", side: "#3b8fd1", sw: "#6fc3ff" } };
 const PIE_DATA = {
-  fish:   { title: "The 10 EXAMPLE fee", rows: [["burn", 50, "burned forever", "5 EXAMPLE"], ["cr", 30, "to the $SPROUT creator", "3 EXAMPLE"], ["tr", 20, "to the Ponds treasury", "2 EXAMPLE"]] },
-  frenzy: { title: "The same 10 EXAMPLE fee, in a frenzy", rows: [["burn", 70, "burned forever", "7 EXAMPLE"], ["cr", 30, "to the $SPROUT creator", "3 EXAMPLE"]] },
+  fish:   { title: "The 10 EXAMPLE fee", rows: [["burn", 50, "burned forever", "5 EXAMPLE"], ["cr", 30, "to the $SPROUT creator", "3 EXAMPLE"], ["hd", 10, "to the pond's holders", "1 EXAMPLE"], ["tr", 10, "to the treasury", "1 EXAMPLE"]] },
+  golden: { title: "The 10 EXAMPLE fee, while $SPROUT is golden", rows: [["burn", 60, "burned forever", "6 EXAMPLE"], ["cr", 30, "to the $SPROUT creator", "3 EXAMPLE"], ["hd", 10, "to the pond's holders", "1 EXAMPLE"]] },
+  frenzy: { title: "The same 10 EXAMPLE fee, in a frenzy", rows: [["burn", 60, "burned forever", "6 EXAMPLE"], ["cr", 30, "to the $SPROUT creator", "3 EXAMPLE"], ["hd", 10, "to the pond's holders", "1 EXAMPLE"]] },
 };
 function drawPie(cv, rows, prog, hi){
   const W = cv.width, H = cv.height, x = cv.getContext("2d"), img = x.createImageData(W, H), b = new Uint32Array(img.data.buffer);
