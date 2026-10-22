@@ -533,7 +533,7 @@ scene("pond", SW, 124, sc => { const bg = whiteBg(SW, 124, [[ix, iy]]), cache = 
   const fmt = n => n >= 1e9 ? "$" + (n / 1e9).toFixed(1) + "B" : n >= 1e6 ? "$" + Math.round(n / 1e6) + "M" : "$" + Math.round(n / 1e3) + "K";
   fetch("pons-top.json?v=2").then(r => r.json()).then(d => { const box = document.getElementById("coins");
     d.coins.forEach(c => { const b = document.createElement("button"); b.className = "coin"; b.dataset.t = c.t;
-      const logo = c.logo ? `<img src="${c.logo}" alt="" loading="lazy" referrerpolicy="no-referrer">` : `<span class="lg" style="background:${c.color};color:${inkFor(c.color)}">${c.t[0]}</span>`;
+      const logo = c.logo ? `<img src="${c.logo.startsWith("logos/") ? c.logo + "?v=2" : c.logo}" alt="" loading="lazy" referrerpolicy="no-referrer">` : `<span class="lg" style="background:${c.color};color:${inkFor(c.color)}">${c.t[0]}</span>`;
       b.innerHTML = `${logo}<span class="id"><span class="pill" style="background:${c.color};color:${inkFor(c.color)};box-shadow:0 2px 0 ${darkerHex(c.color, .62)}">$${c.t}</span><span class="nm">${c.name}</span></span><span class="mc">${fmt(c.mcap)}</span>`;
       b.onmouseenter = () => pick(c); b.onfocus = () => pick(c); b.onclick = () => pick(c); box.appendChild(b); });
     box.onmouseleave = () => pick(null); });
