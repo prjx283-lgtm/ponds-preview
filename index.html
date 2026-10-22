@@ -186,6 +186,78 @@ button{font:inherit;cursor:pointer}
   .intro{right:22px;max-width:none;padding:18px}.intro h1{font-size:24px}.zoom{bottom:auto;top:130px}
   .stats{grid-template-columns:repeat(2,1fr)}.stats b{font-size:20px}
 }
+
+.how2{max-width:1180px;margin:0 auto;padding:96px 24px 80px;--pill:11px}
+.h2head{margin-bottom:34px}
+.h2head h2{font:900 52px/1.02 Unbounded,sans-serif;letter-spacing:-.025em}
+.h2head p{font-size:17px;line-height:1.55;color:#4f6670;margin-top:12px}
+.h2head.sm{margin-top:72px}
+.h2head.sm h2{font-size:36px}
+.panels{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.pcard{position:relative;border:2px solid #0c2a33;border-radius:20px;overflow:hidden;background:#fff}
+.pcard .no{position:absolute;left:0;top:0;z-index:2;width:38px;height:38px;display:grid;place-items:center;background:#0c2a33;color:#fff;font:900 15px Unbounded,sans-serif;border-bottom-right-radius:14px}
+.pane{aspect-ratio:160/124;display:flex;align-items:center;justify-content:center;border-bottom:2px solid #0c2a33;padding:6px}
+.pane .art{width:100%;margin:0}
+.pcard .body{padding:18px 20px 22px;background:#f6f9f8;height:100%}
+.badge{display:inline-block;font:700 11px Unbounded,sans-serif;background:#0c2a33;color:#fff;border-radius:999px;padding:6px 12px 5px}
+.badge.fee{background:#ffd23f;color:#3a2a00}
+.badge.burn{background:#ff5a3a}
+.badge.gold{background:#ffd23f;color:#3a2a00}
+.badge.dark{background:#0c2a33}
+.pcard h3{font:900 21px/1.15 Unbounded,sans-serif;letter-spacing:-.01em;margin:14px 0 8px}
+.pcard .body p{font-size:15px;line-height:1.6;color:#3c5560}
+.chip.fee{background:#ffd23f;color:#3a2a00}
+.no ~ .pane .ctr{left:auto;right:10px}
+.pane [data-scene=frenzy] .ctr{display:none}
+.pane [data-scene=frenzy] .timer{left:10px;right:auto}
+.split{margin-top:20px;padding:26px 28px 28px;background:#f6f9f8}
+.split-head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:24px}
+.split h3{font:900 28px/1.1 Unbounded,sans-serif;letter-spacing:-.015em;margin:0}
+.split-head p{font-size:15px;color:#4f6670;margin-top:8px}
+.modes{display:flex;gap:6px;background:#fff;border:2px solid #0c2a33;border-radius:999px;padding:4px}
+.modes button{font:700 12px Unbounded,sans-serif;border:0;background:none;color:#0c2a33;border-radius:999px;padding:9px 14px 8px;cursor:pointer}
+.modes button.on{background:#0c2a33;color:#fff}
+.modes button[data-mode=boost].on{background:#ffd23f;color:#3a2a00}
+.split-body{display:grid;grid-template-columns:minmax(240px,380px) 1fr;gap:36px;align-items:center}
+.piebig{width:100%}
+.piebig canvas{display:block;width:100%;height:auto;image-rendering:pixelated}
+.legend{display:grid;gap:6px}
+.lrow{display:grid;grid-template-columns:18px 1fr auto auto;gap:14px;align-items:center;padding:12px 14px;border-radius:14px;cursor:default;transition:background .2s}
+.lrow:hover{background:#fff}
+.lrow i{width:18px;height:18px;border-radius:5px}
+.lrow b{display:block;font:800 15px Unbounded,sans-serif}
+.lrow span{display:block;font-size:13px;color:#5d7680;margin-top:3px}
+.lrow em{font:900 28px Unbounded,sans-serif;font-style:normal;min-width:2.6em;text-align:right}
+.lrow strong{font:500 13px "JetBrains Mono",monospace;color:#3c5560;min-width:9.5em;text-align:right}
+.worked{margin-top:10px;padding:14px 16px;border:2px dashed #c9d6d1;border-radius:14px;font-size:15px;line-height:1.6;color:#1d3640;background:#fff}
+.note{font-size:12px;color:#7b8f97;padding:0 4px}
+.route{margin-top:20px;padding:26px 28px;background:#f6f9f8}
+.route h3{font:900 24px Unbounded,sans-serif;margin:0 0 18px}
+.hops{display:flex;align-items:center;flex-wrap:wrap;gap:10px}
+.hop{font:900 16px Unbounded,sans-serif;border-radius:999px;padding:12px 20px 11px;border:2px solid #0c2a33;background:#fff}
+.hop.ex{background:var(--ex);color:var(--exi)}
+.hop.sp{background:#8fd14f;color:#10141a}
+.arr{font:500 12px "JetBrains Mono",monospace;color:#5d7680;display:flex;flex-direction:column;align-items:center;gap:6px;padding:0 4px}
+.arr i{display:block;width:96px;height:2px;background:#0c2a33;position:relative}
+.arr i::after{content:"";position:absolute;right:-1px;top:-5px;border:6px solid transparent;border-left:9px solid #0c2a33;border-right:0}
+.route p{font-size:15px;line-height:1.6;color:#3c5560;margin-top:18px;max-width:72ch}
+@media (max-width:960px){
+  .panels{grid-template-columns:1fr;max-width:460px;margin:0 auto}
+  .split-body{grid-template-columns:1fr}
+  .piebig{max-width:280px;margin:0 auto}
+  .split-body{gap:20px}
+  .split,.route{padding:20px 18px}
+  .split h3{font-size:24px}
+  .h2head h2{font-size:36px}
+  .lrow{grid-template-columns:16px 1fr auto;gap:10px;padding:10px 6px}
+  .lrow b{font-size:14px}
+  .lrow em{font-size:22px;min-width:0}
+  .lrow strong{grid-column:2 / 4;text-align:left;min-width:0;margin-top:-4px}
+  .hops{flex-direction:column;align-items:flex-start;gap:4px}
+  .arr{flex-direction:row-reverse;gap:10px;padding:2px 0 2px 26px}
+  .arr i{width:2px;height:26px}
+  .arr i::after{right:auto;left:-5px;top:auto;bottom:-2px;border:6px solid transparent;border-top:9px solid #0c2a33;border-bottom:0}
+}
 </style>
 </head>
 <body>
@@ -204,38 +276,47 @@ button{font:inherit;cursor:pointer}
   <div class="toast" id="toast"></div>
 </div>
 <div class="stats" id="stats"></div>
-<div class="how-wrap"><section class="how" id="how">
-  <div class="how-head"><h2>How it works</h2><p>Seven steps, each with an example. In most of them $EXAMPLE is a pond and $SPROUT is a fish living in it.</p></div>
-  <article class="step"><div class="art" data-scene="pond"></div><div class="txt">
-    <span class="num">1 · The pond</span><h3>Any coin can be a pond.</h3>
-    <p>A pond is a coin that already trades on Robinhood Chain, with at least 1 ETH of liquidity. Anyone can register it, once. The pond takes the colour of the coin's logo.</p>
-    <div class="eg"><b>Top on Pons right now</b><div class="coins" id="coins"></div><div class="hint">Hover a coin to see it as a pond.</div></div></div></article>
-  <article class="step"><div class="art" data-scene="fish"></div><div class="txt">
-    <span class="num">2 · The fish</span><h3>Drop a fish in any pond.</h3>
-    <p>A fish is a new coin that lives in a pond. It is bought and sold with the pond's coin, not with ETH. Every fish is a koi, swimming in its pond.</p>
-    <div class="eg"><b>Example</b>You launch $SPROUT in the $EXAMPLE pond: a picture, a name, the pond. People buy $SPROUT with $EXAMPLE. No $EXAMPLE? The site swaps ETH to $EXAMPLE and $EXAMPLE to $SPROUT in one click. Launching costs 2.5% of your first buy, nothing else.</div></div></article>
-  <article class="step"><div class="art" data-scene="trade"></div><div class="txt">
-    <span class="num">3 · The fee</span><h3>Every fish trade burns the pond.</h3>
-    <p>Every buy or sell of a fish pays 1%, in the pond's coin. Half of it is burned forever, so the busier the fish, the smaller the pond's supply.</p>
-    <div class="eg"><b>Example</b>Someone buys 1,000 EXAMPLE of $SPROUT. The fee is 10 EXAMPLE.
-      <div class="pie-row" data-pie="fish"></div></div></div></article>
-  <article class="step"><div class="art" data-scene="golden"></div><div class="txt">
-    <span class="num">4 · Golden koi</span><h3>A golden koi can appear anytime.</h3>
-    <p>A few times a day, one fish turns gold for 10 minutes. While it is gold, its trades burn 60% of the pond's coin instead of 50%. Nobody knows when or where it lands, not even us. Ponds that get fed every day earn extra golden koi.</p>
-    <div class="eg"><b>Example</b>$SPROUT turns gold. Someone buys 1,000 EXAMPLE of it. The fee is still 10 EXAMPLE, but 6 burn instead of 5.
-      <div class="pie-row" data-pie="golden"></div></div></div></article>
-  <article class="step"><div class="art" data-scene="grow"></div><div class="txt">
-    <span class="num">5 · Growing up</span><h3>At 2 ETH of volume, a fish leaves the curve.</h3>
-    <p>When a fish reaches 2 ETH of trading volume, it graduates. It moves to a Uniswap pool with 100% of its liquidity locked forever, and its trades keep feeding the pond. It can then become a pond itself, up to 3 deep.</p>
-    <div class="eg"><b>Example</b>$SPROUT has traded 2 ETH in total. Its liquidity is locked for good, and $SPROUT can now be a pond with fish of its own.</div></div></article>
-  <article class="step"><div class="art" data-scene="frenzy"></div><div class="txt">
-    <span class="num">6 · Frenzy</span><h3>Burn $PONDS, start a frenzy.</h3>
-    <p>Anyone can burn $PONDS on any pond to start a frenzy. While it lasts, 60% of that pond's fees burn it instead of 50%, and the pond sits right next to the middle of the map.</p>
-    <div class="eg"><b>Example</b>$EXAMPLE's holders earn about 0.008 ETH every 10 minutes. A frenzy burns half of that instead, so 10 minutes of frenzy costs 1.5 times the half: 0.006 ETH of $PONDS, burned. One hour costs 0.036 ETH. You can stack up to 24 hours.
-      <div class="pie-row" data-pie="frenzy"></div></div></div></article>
-  <article class="step"><div class="art" data-scene="fire"></div><div class="txt">
-    <span class="num">7 · $PONDS</span><h3>$PONDS burns itself too.</h3>
-    <p>Every frenzy burns $PONDS. $PONDS is a pond as well, so every trade of a fish living in it burns $PONDS. And a steady buy and burn runs on its own, all the time. Nobody has to remember, nobody has to be trusted.</p></div></article>
+<div class="how-wrap"><section class="how2" id="how">
+  <div class="h2head"><h2>Trade the fish. Burn the pond.</h2><p>A fish is a coin that lives inside another coin. Every trade of it burns that coin.</p></div>
+  <div class="panels">
+    <article class="pcard"><span class="no">1</span><div class="pane"><div class="art" data-scene="p1"></div></div>
+      <div class="body"><span class="badge">priced in $EXAMPLE</span><h3>Priced in the pond</h3><p>$SPROUT has no ETH price. You buy it with $EXAMPLE, and the site swaps your ETH for you.</p></div></article>
+    <article class="pcard"><span class="no">2</span><div class="pane"><div class="art" data-scene="p2"></div></div>
+      <div class="body"><span class="badge fee">1% fee in $EXAMPLE</span><h3>Every trade pays the pond</h3><p>Each buy and sell of $SPROUT pays 1%, collected in $EXAMPLE.</p></div></article>
+    <article class="pcard"><span class="no">3</span><div class="pane"><div class="art" data-scene="burn3"></div></div>
+      <div class="body"><span class="badge burn">50% burns</span><h3>Half goes up in smoke</h3><p>Half the fee leaves $EXAMPLE's supply forever. The rest goes to the people who make the pond grow.</p></div></article>
+  </div>
+
+  <div class="split pcard" id="split">
+    <div class="split-head"><div><h3>Where the 1% goes</h3><p>Every trade, split three ways. Hover a share to light it up.</p></div>
+      <div class="modes" role="tablist"><button class="on" data-mode="normal">Every trade</button><button data-mode="boost">Golden koi or frenzy</button></div></div>
+    <div class="split-body">
+      <div class="piebig" aria-hidden="true"><canvas id="piebig" width="76" height="64"></canvas></div>
+      <div class="legend">
+        <div class="lrow" data-k="burn"><i></i><div><b>Burned from the pond</b><span>gone from $EXAMPLE's supply forever</span></div><em></em><strong></strong></div>
+        <div class="lrow" data-k="cr"><i></i><div><b>To the fish's creator</b><span>paid in $EXAMPLE, claim any time</span></div><em></em><strong></strong></div>
+        <div class="lrow" data-k="hd"><i></i><div><b>To the pond's holders</b><span>the holders who locked $EXAMPLE to open the pond</span></div><em></em><strong></strong></div>
+        <p class="worked" id="worked"></p>
+        <p class="note">Example numbers until launch. Live totals will be read from the chain.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="h2head sm"><h2>Burn it faster</h2><p>Three ways a pond burns harder.</p></div>
+  <div class="panels">
+    <article class="pcard"><div class="pane"><div class="art" data-scene="golden"></div></div>
+      <div class="body"><span class="badge gold">60% burns for 10 min</span><h3>Golden koi</h3><p>A few times a day a random fish turns gold. Nobody knows where, not even us.</p></div></article>
+    <article class="pcard"><div class="pane"><div class="art" data-scene="frenzy"></div></div>
+      <div class="body"><span class="badge burn">60% burns</span><h3>Frenzy</h3><p>Burn $PONDS on any pond to start one. Stack it up to 24 hours.</p></div></article>
+    <article class="pcard"><div class="pane"><div class="art" data-scene="fire"></div></div>
+      <div class="body"><span class="badge dark">$PONDS burns too</span><h3>$PONDS</h3><p>Every launch, feeding and frenzy burns $PONDS, and so does every fish in its pond.</p></div></article>
+  </div>
+
+  <div class="route pcard">
+    <h3>ETH in, fish out</h3>
+    <div class="hops"><span class="hop eth">ETH</span><span class="arr">Pons pool<i></i></span><span class="hop ex">$EXAMPLE</span><span class="arr">Ponds curve<i></i></span><span class="hop sp">$SPROUT</span></div>
+    <p>One signature for the whole route. At 2 ETH of volume $SPROUT graduates to a Uniswap pool with its liquidity locked forever, and it can host fish of its own, up to 3 deep.</p>
+  </div>
 </section></div>
 <div class="launch-wrap"><section class="launch" id="launch">
   <div class="launch-head"><h2>Start growing a pond.</h2><p>Picture, name, pond. One signature and your fish swims in that pond, and every trade of your fish burns the pond's coin.</p></div>
@@ -520,7 +601,7 @@ const mkPond = opts => { const c = document.createElement("canvas"); return { c,
 const mkPill = (host, p, html) => { const b = document.createElement("span"); b.className = "pill"; b.style.background = p.pc; b.style.color = p.ink; b.style.boxShadow = `0 2px 0 ${p.edge}`; b.innerHTML = html || "$" + p.t; host.appendChild(b); return b; };
 const at = (el, x, y, W, H) => { el.style.left = x / W * 100 + "%"; el.style.top = y / H * 100 + "%"; };
 const SCENES = [];
-function scene(name, W, H, setup){ const host = document.querySelector(`[data-scene=${name}]`), cv = document.createElement("canvas"); cv.width = W; cv.height = H; host.prepend(cv);
+function scene(name, W, H, setup){ const host = document.querySelector(`[data-scene=${name}]`); if (!host) return; const cv = document.createElement("canvas"); cv.width = W; cv.height = H; host.prepend(cv);
   const sc = { host, W, H, cx: cv.getContext("2d"), visible: false, chip(text, x, y, cls){ const c = document.createElement("span"); c.className = "chip " + (cls || ""); c.textContent = text; at(c, x, y, W, H); host.appendChild(c); setTimeout(() => c.remove(), 1750); } };
   sc.cx.imageSmoothingEnabled = false; setup(sc); SCENES.push(sc); new IntersectionObserver(es => es.forEach(e => sc.visible = e.isIntersecting)).observe(host); }
 const MOSS_KOI = ["gold", "kohaku", "tancho", "sakura"], ix = 16, iy = 4, SW = 160; // one-pond scenes are SW x 124, framed tight on the island
@@ -615,6 +696,63 @@ scene("fire", 140, 96, sc => { const W = 200, H = 124, ctx = sc.cx, OX = -30, OY
     flying = flying.filter(c => { c.u += 1 / 16; if (c.u >= 1) { flare = 5; burned += c.n; show(); sc.chip(`+${c.n.toLocaleString("en-US")} $PONDS burned`, 100 + OX, 58 + OY, "burn"); return false; }
       const x = c.x0 + (c.x1 - c.x0) * c.u, y = c.y0 + (c.y1 - c.y0) * c.u - 34 * Math.sin(Math.PI * c.u); ctx.drawImage(COINS[SPIN[((tick >> 1) + c.n) % 4]], Math.round(x) - 4, Math.round(y) - 4); return true; }); ctx.setTransform(1, 0, 0, 1, 0, 0); }; });
 
+// ---------- how a pond burns: panels 1 and 2 ----------
+// 1: $SPROUT is priced in EXAMPLE, its price moves with every trade
+scene("p1", SW, 124, sc => { const pond = mkPond({ seed: 20, roof: MOSS.pc, koi: MOSS_KOI }), bg = whiteBg(SW, 124, [[ix, iy]]); at(mkPill(sc.host, EX), ix + 64, iy + 99, SW, 124);
+  const tag = mkPill(sc.host, SPROUT, "$SPROUT<small>fish</small>"); tag.classList.add("tag");
+  const px = document.createElement("div"); px.className = "ctr"; sc.host.appendChild(px); let p = .0200, next = 8; const show = () => px.innerHTML = `1 $SPROUT =<b>${p.toFixed(4)} EXAMPLE</b>`; show();
+  sc.frame = tick => { pond.f(); sc.cx.drawImage(bg, 0, 0); sc.cx.drawImage(pond.c, ix, iy); const k = pond.f.kois[0], x = ix + k.x, y = iy + k.y; at(tag, x, y - 4, SW, 124);
+    if (tick >= next) { next = tick + 26; const buy = Math.random() < .72; sc.chip(buy ? "bought with 1,000 EXAMPLE" : "sold for 1,000 EXAMPLE", x, y - 14); p *= buy ? 1.011 : .992; show(); } }; });
+// 2: every trade pays 1% in EXAMPLE
+scene("p2", SW, 124, sc => { const pond = mkPond({ seed: 20, roof: MOSS.pc, koi: MOSS_KOI }), bg = whiteBg(SW, 124, [[ix, iy]]); at(mkPill(sc.host, EX), ix + 64, iy + 99, SW, 124);
+  const tag = mkPill(sc.host, SPROUT, "$SPROUT<small>fish</small>"); tag.classList.add("tag");
+  const ctr = document.createElement("div"); ctr.className = "ctr"; sc.host.appendChild(ctr); let paid = 48210, next = 14; const show = () => ctr.innerHTML = `fees paid<b>${paid.toLocaleString("en-US")} EXAMPLE</b>`; show();
+  sc.frame = tick => { pond.f(); sc.cx.drawImage(bg, 0, 0); sc.cx.drawImage(pond.c, ix, iy); const k = pond.f.kois[0], x = ix + k.x, y = iy + k.y; at(tag, x, y - 4, SW, 124);
+    if (tick >= next) { next = tick + 28; sc.chip(Math.random() < .7 ? "buy 1,000 EXAMPLE" : "sell 1,000 EXAMPLE", x, y - 14); setTimeout(() => { sc.chip("fee 10 EXAMPLE", x, y - 14, "fee"); paid += 10; show(); }, 750); } }; });
+// panel 3: half of every fee is thrown into the fire, burning EXAMPLE
+scene("burn3", 140, 96, sc => { const W = 200, H = 124, ctx = sc.cx, OX = -30, OY = -26; // drawn in a 200x124 world, framed tight on the fire
+  const base = sprite(W, H, b => { b.fill(col("#ffffff")); const SH = col("#e1e8e5");
+    for (let y = 104; y <= 117; y++) for (let x = 58; x <= 142; x++) { const d = ((x - 100) / 42) ** 2 + ((y - 111) / 6) ** 2; if (d <= 1 && (d < .45 || ((x + y) & 1) === 0)) b[y * W + x] = SH; }
+    [[70, 104], [79, 109], [91, 111], [105, 111], [117, 109], [127, 104], [75, 98], [124, 98]].forEach(([x, y]) => paintBlob(b, W, H, [[x, y, 3.4], [x + 2.6, y + .6, 2.5]], STONE));
+    const log = (x0, y0, x1, y1) => { const len = Math.hypot(x1 - x0, y1 - y0); for (let t = 0; t <= len; t += .5) { const x = Math.round(x0 + (x1 - x0) * t / len), y = y0 + (y1 - y0) * t / len;
+        for (let k = -2; k <= 2; k++) { const Y = Math.round(y + k); if (x >= 0 && Y >= 0 && x < W && Y < H) b[Y * W + x] = col(k === -2 || k === 2 ? "#2e1a0e" : k === -1 ? "#9a6436" : "#6a3e1e"); } }
+      [[x0, y0], [x1, y1]].forEach(([x, y]) => { for (let k = -1; k <= 1; k++) b[Math.round(y + k) * W + Math.round(x)] = col(k === 0 ? "#e0b078" : "#c89058"); }); };
+    log(80, 106, 120, 95); log(80, 95, 120, 106); });
+  const FC = ["#8a1f10", "#ff5a3a", "#ff9a2e", "#ffd23f", "#fff3b0"]; let flame = [], flare = 0;
+  const makeFlame = tick => { const m = new Map(), T = [[-9, 19, 6], [0, 30, 8], [9, 21, 6], [-4, 13, 5], [5, 15, 5]];
+    T.forEach(([dx, h0, w0], k) => { const h = h0 + Math.round(3 * Math.sin(tick * .9 + k * 1.7)) + (flare > 0 ? 9 : 0), cx0 = 100 + dx;
+      for (let j = 0; j < h; j++) { const t = j / h, sway = Math.sin(t * 3 + tick * .6 + k) * 1.5 * t, w = w0 * Math.pow(1 - t, .7) * Math.min(1, .55 + t * 3), y = 99 - j;
+        for (let x = Math.floor(cx0 + sway - w); x <= Math.ceil(cx0 + sway + w); x++) { const u = Math.abs(x + .5 - cx0 - sway) / Math.max(w, .5); if (u > 1) continue; const heat = (1 - u) * (1 - t * .8), key = y * W + x; if (heat > (m.get(key) || 0)) m.set(key, heat); } } });
+    flame = []; m.forEach((heat, key) => { const edge = [1, -1, W, -W].some(o => !m.has(key + o)); flame.push([key % W, key / W | 0, edge ? FC[0] : heat > .62 ? FC[4] : heat > .42 ? FC[3] : heat > .22 ? FC[2] : FC[1]]); }); };
+  const EMB = [...Array(7)].map((_, i) => ({ x: 96 + i * 1.5, y: 72, life: i * 3 }));
+  const COIN = [["..OOOOO..", ".OyyyyyO.", "OyhYYYYyO", "OyYmmYYyO", "OyYmYmYyO", "OyYmmYYyO", "OyYmYYYyO", ".OyyyyyO.", "..OOOOO.."],
+                ["...OOO...", "..OyyyO..", "..OhYYO..", "..OymYO..", "..OymYO..", "..OymYO..", "..OyYYO..", "..OyyyO..", "...OOO..."],
+                ["....O....", "...OyO...", "...OyO...", "...OyO...", "...OyO...", "...OyO...", "...OyO...", "...OyO...", "....O...."]];
+  const CM2 = { O: "#2d5a1e", y: "#5ea83a", Y: "#8fd14f", m: "#3f7a26", h: "#d8f5b8" }, COINS = COIN.map(g => sprite(9, 9, (b, w, h) => gridPaint(b, w, h, g, 0, 0, CM2))), SPIN = [0, 1, 2, 1];
+  const ctr = document.createElement("div"); ctr.className = "ctr"; sc.host.appendChild(ctr); let burned = 24105, next = 8, flying = [];
+  const show = () => ctr.innerHTML = `EXAMPLE burned<b>${burned.toLocaleString("en-US")}</b>`; show();
+  sc.frame = tick => { ctx.setTransform(1, 0, 0, 1, OX, OY); ctx.drawImage(base, 0, 0);
+    if (tick % 2 === 0 || !flame.length) { makeFlame(tick); if (flare > 0) flare--; }
+    flame.forEach(([x, y, c]) => { ctx.fillStyle = c; ctx.fillRect(x, y, 1, 1); });
+    EMB.forEach(e => { e.life++; if (e.life > 22) { e.x = 92 + Math.random() * 16; e.y = 74 - (flare ? 8 : 0); e.life = 0; } e.y -= .9; e.x += Math.sin(e.life * .5) * .4; if (e.life < 18) { ctx.fillStyle = e.life % 4 < 2 ? "#ffd23f" : "#ff9a2e"; ctx.fillRect(Math.round(e.x), Math.round(e.y), 1, 1); } });
+    if (tick >= next) { next = tick + 22 + (Math.random() * 10 | 0); const left = Math.random() < .5; flying.push({ x0: left ? 24 : 176, y0: 38 + Math.random() * 22, x1: 96 + Math.random() * 8, y1: 86, u: 0, n: 5 }); }
+    flying = flying.filter(c => { c.u += 1 / 16; if (c.u >= 1) { flare = 5; burned += c.n; show(); sc.chip(`${c.n} EXAMPLE burned`, 100 + OX, 58 + OY, "burn"); return false; }
+      const x = c.x0 + (c.x1 - c.x0) * c.u, y = c.y0 + (c.y1 - c.y0) * c.u - 34 * Math.sin(Math.PI * c.u); ctx.drawImage(COINS[SPIN[((tick >> 1) + c.n) % 4]], Math.round(x) - 4, Math.round(y) - 4); return true; }); ctx.setTransform(1, 0, 0, 1, 0, 0); }; });
+
+// ---------- where the 1% goes: the 3D pixel pie, sweeping in when seen; hovering a share lights its slice ----------
+{ const SPLITS = { normal: { burn: 50, cr: 30, hd: 20 }, boost: { burn: 60, cr: 30, hd: 10 } }, KEYS = ["burn", "cr", "hd"];
+  const cv = document.getElementById("piebig"), rows = [...document.querySelectorAll("#split .lrow")], worked = document.getElementById("worked"), tot = { burn: 24105, cr: 14463, hd: 9642 };
+  document.querySelector(".hop.ex").style.setProperty("--ex", EX.pc); document.querySelector(".hop.ex").style.setProperty("--exi", EX.ink);
+  let mode = "normal", prog = 0, hi = -1, sweep = 0;
+  const pie = () => KEYS.map(k => [k, SPLITS[mode][k]]), draw = () => drawPie(cv, pie(), prog, hi);
+  const run = () => { const t0 = performance.now(), id = ++sweep; const step = now => { if (id !== sweep) return; prog = Math.min(1, (now - t0) / 700); draw(); if (prog < 1) requestAnimationFrame(step); }; requestAnimationFrame(step); setTimeout(() => { if (id === sweep && prog < 1) { prog = 1; draw(); } }, 800); };
+  const text = () => { const sp = SPLITS[mode]; rows.forEach(r => { const k = r.dataset.k; r.querySelector("i").style.background = SL[k].sw; r.querySelector("em").textContent = sp[k] + "%"; });
+    worked.innerHTML = `A trade of 1,000 EXAMPLE pays a 10 EXAMPLE fee: <b>${sp.burn / 10} burn forever</b>, ${sp.cr / 10} go to the creator, ${sp.hd / 10} to the holders.`; };
+  const totals = () => rows.forEach(r => r.querySelector("strong").textContent = tot[r.dataset.k].toLocaleString("en-US") + " EXAMPLE");
+  document.querySelectorAll(".modes button").forEach(b => b.onclick = () => { mode = b.dataset.mode; document.querySelectorAll(".modes button").forEach(x => x.classList.toggle("on", x === b)); text(); run(); });
+  rows.forEach((r, i) => { r.onmouseenter = () => { hi = i; draw(); }; r.onmouseleave = () => { hi = -1; draw(); }; });
+  let seen = false; new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting && !seen) { seen = true; run(); } }), { threshold: .3 }).observe(cv);
+  setTimeout(() => { text(); totals(); draw(); }); setInterval(() => { const sp = SPLITS[mode]; tot.burn += sp.burn / 10; tot.cr += sp.cr / 10; tot.hd += sp.hd / 10; totals(); }, 2400); }
 // ---------- start growing: drop a fish; the preview is the chosen pond with your koi swimming in it ----------
 const LF = { name: "", tick: "", tickTouched: false, color: null, pond: P.slice().sort(byPct)[0], hasPic: false };
 const mineSpec = c => ({ body: [WH, c, c, WH, WH, c, c, WH, WH, WH, WH].map(x => x), fin: "#eef3ff" });
